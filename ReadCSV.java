@@ -23,6 +23,13 @@ public class ReadCSV {
 		}
 	}
 
+	public int findIndexForColumn(String name) {
+		for (int i = 0 ; i < columns.size() ; i++) {
+			if (columns.get(i).equals(name)) return i;
+		}
+		return -1;
+	}
+
 	public void printColumns() {
 		System.out.println(columns);
 	}

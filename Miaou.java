@@ -36,7 +36,7 @@ public class Miaou {
 //		System.out.println(miaouFilter(s).map);
 		//Returns the average answer rate in Toulon
 		System.out.println( miaouFilter(s).mapToInt(b -> Integer.parseInt(b.get(12))).average().orElse(0) );
-
+		System.out.println(tt.findIndexForColumn("academie"));
 
 
 //		ReadCSV tt = new ReadCSV();
