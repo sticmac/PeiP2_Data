@@ -41,7 +41,6 @@ public class ReadCSV {
 		}
 
 		BufferedReader br = null;
-		int i = 0;
 		try{
 			br = new BufferedReader(new FileReader(filename)); // Open the file
 		}
@@ -53,14 +52,13 @@ public class ReadCSV {
 			String linestr = br.readLine();
 			columns = new ArrayList<String>();
 			data = new ArrayList<ArrayList<String>>();
-			readColumns(linestr, columns);
-			while(true) {
-				linestr = br.readLine();
-				if(linestr == null) break;
-
+			readColumns(linestr, columns); //TODO: replace by String.split(regexp) -> see if it's slower or not
+			linestr = br.readLine();
+			while(linestr != null) {
 				ArrayList<String> line = new ArrayList<String>();
 				readColumns(linestr, line);
 				data.add(line);
+				linestr = br.readLine();
 			}
 		}
 		catch (IOException e) {
