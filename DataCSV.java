@@ -5,6 +5,7 @@ import java.util.stream.*;
 class DataCSV {
 	private ArrayList<Predicate<ArrayList<String>>> filterList;
 	private ReadCSV csv;
+	private int selectedColumn;
 
 	public DataCSV(ReadCSV csv) {
 		this.csv = csv;
@@ -30,11 +31,12 @@ class DataCSV {
 		filterList.clear();
 	}
 
-	public String[][] toArray() {
+	public String[][] toArray(String columnSort) {
+		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
-			.sorted((b,c) -> b.get(15).compareTo(c.get(15))) // Sort by the 16th column by creating a comparaton
+			.sorted((b,c) -> b.get(selectedColumn).compareTo(c.get(selectedColumn))) // Sort by the 16th column by creating a comparaton
 			.limit(10) // Limit to 10 results
-			.map(DataCSV::extractColumns)
+			.map(this::extractColumns)
 			.toArray(String[][]::new); //Converts the stream into an array 
 	}
 
@@ -43,15 +45,23 @@ class DataCSV {
 	}
 
 	public String[] getColumnsName() {
-		return extractColumns(csv.getColumns());
+		return csv.getColumns().toArray(new String[csv.getColumns().size()]);
 	}
 
+	public String[] getColumnsName(List<Integer> indexes) {
+		ArrayList<String> columns = new ArrayList<String>();
+		for (Integer i : indexes) {
+			columns.add(csv.getColumns().get(i));
+		}
+		return columns.toArray(new String[columns.size()]);
+	}
+		
 	public String[] getDisciplines() {
 		int i = findIndexForColumn("discipline");
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
-	private static String[] extractColumns(ArrayList<String> b) {
-		return new String[]{b.get(6), b.get(2), b.get(15)};
+	private String[] extractColumns(ArrayList<String> b) {
+		return new String[]{b.get(6), b.get(2), b.get(selectedColumn)};
 	}
 }

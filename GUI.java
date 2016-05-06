@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Classe de la <code>GUI</code>
@@ -19,6 +19,7 @@ class GUI extends JFrame implements ActionListener {
 	private JMenuBar bar;
 	private JTable results;
 	private JComboBox disciplines;
+	private JComboBox sort;
 	private JMenu game;
 	private JMenu help;
 	private JMenuItem quit;
@@ -52,6 +53,7 @@ class GUI extends JFrame implements ActionListener {
 		//New things
 		search = new JButton("Search");
 		disciplines = new JComboBox<String>(csv.getDisciplines());
+		sort = new JComboBox<String>(csv.getColumnsName());
 
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
@@ -61,6 +63,7 @@ class GUI extends JFrame implements ActionListener {
 		getContentPane().setLayout(new BorderLayout());
 		this.add(search, BorderLayout.WEST);
 		this.add(disciplines, BorderLayout.EAST);
+		this.add(sort, BorderLayout.NORTH);
 
 		setVisible(true);
 		pack();
@@ -75,10 +78,18 @@ class GUI extends JFrame implements ActionListener {
 	}
 	
 	private void processSearch() {
+		csv.clearFilterList();
+
 		String discipline = (String)disciplines.getSelectedItem();
+		String strSort = (String)sort.getSelectedItem();
+
 		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
-		csv.addFilter(b -> !b.get(csv.findIndexForColumn("taux_dinsertion")).isEmpty());
-		displayResults(csv.toArray(), csv.getColumnsName()); 
+		csv.addFilter(b -> !b.get(csv.findIndexForColumn(strSort)).isEmpty());
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		indexes.add(6);
+		indexes.add(2);
+		indexes.add(csv.findIndexForColumn(strSort));
+		displayResults(csv.toArray(strSort), csv.getColumnsName(indexes));
 	}
 
 	@Override
