@@ -31,14 +31,16 @@ class DataCSV {
 		filterList.clear();
 	}
 
+
 	public String[][] toArray(String columnSort) {
 		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
-			.sorted((b,c) -> b.get(selectedColumn).compareTo(c.get(selectedColumn))) // Sort by the 16th column by creating a comparaton
+			.sorted(this::compare)
 			.limit(10) // Limit to 10 results
 			.map(this::extractColumns)
 			.toArray(String[][]::new); //Converts the stream into an array 
 	}
+
 
 	public int findIndexForColumn(String name) {
 		return csv.findIndexForColumn(name);
@@ -59,6 +61,18 @@ class DataCSV {
 	public String[] getDisciplines() {
 		int i = findIndexForColumn("discipline");
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
+	}
+
+	
+	private int compare(ArrayList<String> b, ArrayList<String> c) {
+		String bstr = b.get(selectedColumn);
+		String cstr = c.get(selectedColumn);
+		try {
+			return Float.valueOf(bstr).compareTo(Float.valueOf(cstr));
+		}
+		catch (NumberFormatException e) {
+			return bstr.compareTo(cstr);
+		}
 	}
 
 	private String[] extractColumns(ArrayList<String> b) {
