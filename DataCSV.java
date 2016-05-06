@@ -10,10 +10,8 @@ class DataCSV {
 		this.csv = csv;
 
 		filterList = new ArrayList<Predicate<ArrayList<String>>>();
-		
-		filterList.add(b -> b.get(2).contains("Toulon")); //add a filter for Toulon universities
-		filterList.add(b -> !b.get(15).isEmpty());
-}
+	}
+
 	//Filters the parsed CSV as a Stream and returns another Stream filtered with filters in filterList. (We like filters).
 	public Stream<ArrayList<String>> miaouFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
@@ -21,6 +19,15 @@ class DataCSV {
 			t = t.filter(lambda); 
 		}
 		return t;
+	}
+
+	//Add filter to filterList
+	public void addFilter(Predicate<ArrayList<String>> filter) {
+		filterList.add(filter);
+	}
+
+	public void clearFilterList() {
+		filterList.clear();
 	}
 
 	public String[][] toArray() {
@@ -33,6 +40,11 @@ class DataCSV {
 
 	public String[] getColumnsName() {
 		return extractColumns(csv.getColumns());
+	}
+
+	public String[] getDisciplines() {
+		int i = findIndexForColumn("discipline");
+		return csv.getData().stream().filter(b -> !b.get(i).map(b -> return b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
 	private static String[] extractColumns(ArrayList<String> b) {

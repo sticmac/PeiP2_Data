@@ -18,6 +18,7 @@ class GUI extends JFrame implements ActionListener {
 	private DataCSV csv;
 	private JMenuBar bar;
 	private JTable results;
+	private JComboBox disciplines;
 	private JMenu game;
 	private JMenu help;
 	private JMenuItem quit;
@@ -50,30 +51,34 @@ class GUI extends JFrame implements ActionListener {
 		
 		//New things
 		search = new JButton("Search");
-		this.add(search);
+		disciplines = new JComboBox(csv.getDisciplines());
 
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
 		rules.addActionListener(this);
 		search.addActionListener(this);
 		
-		getContentPane().setLayout(new FlowLayout());
+		getContentPane().setLayout(new BorderLayout());
+		this.add(search, BorderLayout.WEST);
+		this.add(disciplines, BorderLayout.WEST);
 
 		setVisible(true);
-		pack(); //Redimensionne la fenêtre selon son contenu. Permet d'utiliser les méthodes getPreferredSize() dans les JPanel la composant.
+		pack();
 	}
 
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
 		results = new JTable(rowData, columnNames);
-		this.add(results);
+		results.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		results.doLayout();
+		this.add(results, BorderLayout.CENTER);
 		pack();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == quit) { System.exit(0); }
-		if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
-		if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
-		if (e.getSource() == search) { displayResults(csv.toArray(), csv.getColumnsName()); }
+		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
+		else if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
+		else if (e.getSource() == search) { displayResults(csv.toArray(), csv.getColumnsName()); }
 	}
 }
