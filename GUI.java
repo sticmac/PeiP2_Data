@@ -20,8 +20,8 @@ class GUI extends JFrame implements ActionListener {
 	private JTable results;
 	private JComboBox disciplines;
 	private JComboBox sort;
-	private JMenu game;
-	private JMenu help;
+	private JMenu options;
+	private JMenu plus;
 	private JMenuItem quit;
 	private JMenuItem rules;
 	private JMenuItem aboutus;
@@ -33,24 +33,24 @@ class GUI extends JFrame implements ActionListener {
 	public GUI(DataCSV csv) {
 		this.csv = csv;
 
-		setTitle("MiaouNyan");
+		//General options about 
+		setTitle("Aide au choix des masters");
 		setResizable(false);
 
-		//Old Menus
+		//Menu set
 		bar = new JMenuBar();
-		game = new JMenu("Jeu");
-		help = new JMenu("Aide");
+		options = new JMenu("Options");
+		plus = new JMenu("Plus");
 		quit = new JMenuItem("Quitter");
 		aboutus = new JMenuItem("À propos");
 		rules = new JMenuItem("Règles");
-		game.add(quit);
-		bar.add(game);
-		help.add(aboutus);
-		help.add(rules);
-		bar.add(help);
+		options.add(quit);
+		bar.add(options);
+		plus.add(aboutus);
+		plus.add(rules);
+		bar.add(plus);
 		this.setJMenuBar(bar);
 		
-		//New things
 		search = new JButton("Search");
 		disciplines = new JComboBox<String>(csv.getDisciplines());
 		sort = new JComboBox<String>(csv.getColumnsName());
@@ -61,9 +61,15 @@ class GUI extends JFrame implements ActionListener {
 		search.addActionListener(this);
 		
 		getContentPane().setLayout(new BorderLayout());
-		this.add(search, BorderLayout.WEST);
-		this.add(disciplines, BorderLayout.EAST);
-		this.add(sort, BorderLayout.NORTH);
+		
+		//Options
+		//JPanel options = new JPanel();
+		//options.setLayout(new GridLayout(3,1));
+		Box options = new Box(BoxLayout.Y_AXIS);
+		options.add(disciplines);
+		options.add(sort);
+		options.add(search);
+		this.add(options, BorderLayout.WEST);
 
 		setVisible(true);
 		pack();
