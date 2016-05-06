@@ -38,16 +38,20 @@ class DataCSV {
 			.toArray(String[][]::new); //Converts the stream into an array 
 	}
 
+	public int findIndexForColumn(String name) {
+		return csv.findIndexForColumn(name);
+	}
+
 	public String[] getColumnsName() {
 		return extractColumns(csv.getColumns());
 	}
 
 	public String[] getDisciplines() {
 		int i = findIndexForColumn("discipline");
-		return csv.getData().stream().filter(b -> !b.get(i).map(b -> return b.get(i)).sorted().distinct().toArray(String[]::new);
+		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
 	private static String[] extractColumns(ArrayList<String> b) {
-		return new String[]{b.get(2), b.get(15)};
+		return new String[]{b.get(6), b.get(2), b.get(15)};
 	}
 }

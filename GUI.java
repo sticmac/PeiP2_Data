@@ -51,7 +51,7 @@ class GUI extends JFrame implements ActionListener {
 		
 		//New things
 		search = new JButton("Search");
-		disciplines = new JComboBox(csv.getDisciplines());
+		disciplines = new JComboBox<String>(csv.getDisciplines());
 
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
@@ -60,7 +60,7 @@ class GUI extends JFrame implements ActionListener {
 		
 		getContentPane().setLayout(new BorderLayout());
 		this.add(search, BorderLayout.WEST);
-		this.add(disciplines, BorderLayout.WEST);
+		this.add(disciplines, BorderLayout.EAST);
 
 		setVisible(true);
 		pack();
@@ -74,11 +74,18 @@ class GUI extends JFrame implements ActionListener {
 		pack();
 	}
 	
+	private void processSearch() {
+		String discipline = (String)disciplines.getSelectedItem();
+		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
+		csv.addFilter(b -> !b.get(csv.findIndexForColumn("taux_dinsertion")).isEmpty());
+		displayResults(csv.toArray(), csv.getColumnsName()); 
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == quit) { System.exit(0); }
 		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
 		else if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
-		else if (e.getSource() == search) { displayResults(csv.toArray(), csv.getColumnsName()); }
+		else if (e.getSource() == search) { processSearch(); }
 	}
 }
