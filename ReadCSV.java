@@ -23,8 +23,15 @@ public class ReadCSV {
 		}
 	}
 
-	public void printColumns() {
-		System.out.println(columns);
+	public int findIndexForColumn(String name) {
+		for (int i = 0 ; i < columns.size() ; i++) {
+			if (columns.get(i).equals(name)) return i;
+		}
+		return -1;
+	}
+
+	public ArrayList<String> getColumns() {
+		return columns;
 	}
 
 	public ArrayList<ArrayList<String>> getData() {
