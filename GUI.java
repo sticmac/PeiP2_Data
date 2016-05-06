@@ -15,6 +15,7 @@ import java.util.Random;
  */
 class GUI extends JFrame implements ActionListener {
 	//Elements du menu
+	private DataCSV csv;
 	private JMenuBar bar;
 	private JTable results;
 	private JMenu game;
@@ -27,7 +28,9 @@ class GUI extends JFrame implements ActionListener {
 	/**
 	 * Constructeur de la <code>GUI</code>
 	 */
-	public GUI() {
+	public GUI(DataCSV csv) {
+		this.csv = csv;
+
 		setTitle("MiaouNyan");
 		setResizable(false);
 
@@ -54,7 +57,7 @@ class GUI extends JFrame implements ActionListener {
 		rules.addActionListener(this);
 		search.addActionListener(this);
 		
-		getContentPane().setLayout(new BorderLayout());
+		getContentPane().setLayout(new FlowLayout());
 
 		setVisible(true);
 		pack(); //Redimensionne la fenêtre selon son contenu. Permet d'utiliser les méthodes getPreferredSize() dans les JPanel la composant.
@@ -63,6 +66,7 @@ class GUI extends JFrame implements ActionListener {
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
 		results = new JTable(rowData, columnNames);
 		this.add(results);
+		pack();
 	}
 	
 	@Override
@@ -70,6 +74,6 @@ class GUI extends JFrame implements ActionListener {
 		if (e.getSource() == quit) { System.exit(0); }
 		if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
 		if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
-		if (e.getSource() == search) { displayResults(); }
+		if (e.getSource() == search) { displayResults(csv.toArray(), csv.getColumnsName()); }
 	}
 }

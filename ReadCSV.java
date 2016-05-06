@@ -30,8 +30,8 @@ public class ReadCSV {
 		return -1;
 	}
 
-	public void printColumns() {
-		System.out.println(columns);
+	public ArrayList<String> getColumns() {
+		return columns;
 	}
 
 	public ArrayList<ArrayList<String>> getData() {
