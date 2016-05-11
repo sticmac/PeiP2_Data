@@ -58,12 +58,11 @@ class DataCSV {
 		return columns.toArray(new String[columns.size()]);
 	}
 		
-	public String[] getDisciplines() {
-		int i = findIndexForColumn("discipline");
+	public String[] getColumnValues(String column) {
+		int i = findIndexForColumn(column);
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
-	
 	private int compare(ArrayList<String> b, ArrayList<String> c) {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);

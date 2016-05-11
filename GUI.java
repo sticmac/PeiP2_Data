@@ -17,9 +17,13 @@ class GUI extends JFrame implements ActionListener {
 	//Elements du menu
 	private DataCSV csv;
 	private JMenuBar bar;
+	
 	private JTable results;
-	private JComboBox disciplines;
 	private JComboBox sort;
+
+	private JComboBox disciplines;
+	private JComboBox academy;
+
 	private JMenu options;
 	private JMenu plus;
 	private JMenuItem quit;
@@ -35,7 +39,6 @@ class GUI extends JFrame implements ActionListener {
 
 		//General options about 
 		setTitle("Aide au choix des masters");
-		setResizable(false);
 
 		//Menu set
 		bar = new JMenuBar();
@@ -52,7 +55,8 @@ class GUI extends JFrame implements ActionListener {
 		this.setJMenuBar(bar);
 		
 		search = new JButton("Search");
-		disciplines = new JComboBox<String>(csv.getDisciplines());
+		disciplines = new JComboBox<String>(csv.getColumnValues("discipline"));
+		academy = new JComboBox<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
 		quit.addActionListener(this);
@@ -65,11 +69,11 @@ class GUI extends JFrame implements ActionListener {
 		//Options
 		//JPanel options = new JPanel();
 		//options.setLayout(new GridLayout(3,1));
-		Box options = new Box(BoxLayout.Y_AXIS);
-		options.add(disciplines);
-		options.add(sort);
-		options.add(search);
-		this.add(options, BorderLayout.WEST);
+		Box choices = new Box(BoxLayout.Y_AXIS);
+		choices.add(disciplines);
+		choices.add(sort);
+		choices.add(search);
+		this.add(choices, BorderLayout.WEST);
 
 		setVisible(true);
 		pack();
