@@ -22,7 +22,7 @@ class GUI extends JFrame implements ActionListener {
 	private JComboBox sort;
 
 	private JComboBox disciplines;
-	private JComboBox academy;
+	private JComboBox academies;
 
 	private JMenu options;
 	private JMenu plus;
@@ -56,7 +56,7 @@ class GUI extends JFrame implements ActionListener {
 		
 		search = new JButton("Search");
 		disciplines = new JComboBox<String>(csv.getColumnValues("discipline"));
-		academy = new JComboBox<String>(csv.getColumnValues("academie"));
+		academies = new JComboBox<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
 		quit.addActionListener(this);
@@ -71,6 +71,7 @@ class GUI extends JFrame implements ActionListener {
 		//options.setLayout(new GridLayout(3,1));
 		Box choices = new Box(BoxLayout.Y_AXIS);
 		choices.add(disciplines);
+		choices.add(academies);
 		choices.add(sort);
 		choices.add(search);
 		this.add(choices, BorderLayout.WEST);
@@ -91,10 +92,13 @@ class GUI extends JFrame implements ActionListener {
 		csv.clearFilterList();
 
 		String discipline = (String)disciplines.getSelectedItem();
+		String academy = (String)academies.getSelectedItem();
 		String strSort = (String)sort.getSelectedItem();
 
 		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
-		csv.addFilter(b -> !b.get(csv.findIndexForColumn(strSort)).isEmpty());
+		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));
+		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
+		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 		indexes.add(6);
 		indexes.add(2);
