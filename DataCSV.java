@@ -36,8 +36,8 @@ class DataCSV {
 		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
-			.limit(10) // Limit to 10 results
 			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new)) // Select columns according to indexes
+			.limit(10) // Limit to 10 results
 			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
@@ -67,7 +67,7 @@ class DataCSV {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);
 		try {
-			return Float.valueOf(bstr).compareTo(Float.valueOf(cstr));
+			return -Float.valueOf(bstr).compareTo(Float.valueOf(cstr));
 		}
 		catch (NumberFormatException e) {
 			return bstr.compareTo(cstr);
