@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class Criteria<T> extends JPanel implements ActionListener{
+class Criteria<T> extends JPanel{
 	private JComboBox<T> list;
 	private JCheckBox enable;
 
@@ -14,23 +14,17 @@ class Criteria<T> extends JPanel implements ActionListener{
 		this.add(enable);
 		this.add(list);
 
-		enable.addActionListener(this);
+		enable.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				list.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
 
 		list.setEnabled(false); //non activated by default: the user has to activate it
 	}
 
 	public Object getSelectedItem() {
 		return list.getSelectedItem();
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == enable) {
-			if (enable.isSelected()) {
-				list.setEnabled(true);
-			}
-			else {
-				list.setEnabled(false);
-			}
-		}
 	}
 }
