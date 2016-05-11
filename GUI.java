@@ -17,21 +17,20 @@ class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
 }
 
 /**
- * Classe de la <code>GUI</code>
+ * <code>GUI</code> class
  * @author Julien Lemaire
- * @author Guillaume Casagrande
+ * @author Pierre-Emmanuel Novac 
  * @version 1.0
  */
 class GUI extends JFrame implements ActionListener {
-	//Elements du menu
 	private DataCSV csv;
 	private JMenuBar bar;
 	
 	private JTable results;
 	private JComboBox sort;
 
-	private JComboBox disciplines;
-	private JComboBox academies;
+	private Criteria disciplines;
+	private Criteria academies;
 
 	private JMenu options;
 	private JMenu plus;
@@ -82,8 +81,8 @@ class GUI extends JFrame implements ActionListener {
 		this.setJMenuBar(bar);
 		
 		search = new JButton("Search");
-		disciplines = new JComboBox<String>(csv.getColumnValues("discipline"));
-		academies = new JComboBox<String>(csv.getColumnValues("academie"));
+		disciplines = new Criteria<String>(csv.getColumnValues("discipline"));
+		academies = new Criteria<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
 		results = new JTable();
@@ -96,8 +95,6 @@ class GUI extends JFrame implements ActionListener {
 		getContentPane().setLayout(new BorderLayout());
 		
 		//Options
-		//JPanel options = new JPanel();
-		//options.setLayout(new GridLayout(3,1));
 		Box choices = new Box(BoxLayout.Y_AXIS);
 		choices.add(disciplines);
 		choices.add(academies);
