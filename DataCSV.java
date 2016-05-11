@@ -32,13 +32,14 @@ class DataCSV {
 	}
 
 
-	public String[][] toArray(String columnSort) {
+	public String[][] toArray(String columnSort, List<Integer> indexes) {
 		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
 			.limit(10) // Limit to 10 results
-			.map(this::extractColumns)
-			.toArray(String[][]::new); //Converts the stream into an array 
+//			.map(this.extractColumns(indexes))
+			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new))
+			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
 
@@ -57,13 +58,12 @@ class DataCSV {
 		}
 		return columns.toArray(new String[columns.size()]);
 	}
-		
+
 	public String[] getDisciplines() {
 		int i = findIndexForColumn("discipline");
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
-	
 	private int compare(ArrayList<String> b, ArrayList<String> c) {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);
@@ -75,7 +75,21 @@ class DataCSV {
 		}
 	}
 
-	private String[] extractColumns(ArrayList<String> b) {
-		return new String[]{b.get(6), b.get(2), b.get(selectedColumn)};
+	private <E extends String, T extends List<E>> Function<T, String[]> extractColumns(List<Integer> indexes) {
+/*		return new Function<T, String[]>(){
+			@Override
+			public String[] apply(T b) {
+				return new String[]{b.get(6), b.get(2), b.get(selectedColumn)};
+			}
+		};*/
+//		a = new String[indexes.length];
+//		for(int i = 0; i < indexes.length; i++) a[i] = b.get(i);
+		return (b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new);
+/*		return (b) -> {
+			String[] a = new String[indexes.length];
+			for(int i = 0; i < indexes.length; i++) a[i] = b.get(i);
+			return a;
+		};*/
+//		return (b) -> new String[]{b.get(6), b.get(2), b.get(selectedColumn)};
 	}
 }
