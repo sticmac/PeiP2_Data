@@ -107,7 +107,9 @@ class GUI extends JFrame implements ActionListener {
 		indexes.add(6);
 		indexes.add(2);
 		indexes.add(csv.findIndexForColumn(strSort));
-		displayResults(csv.toArray(strSort), csv.getColumnsName(indexes));
+		indexes.add(7);
+		indexes.add(9);
+		displayResults(csv.toArray(strSort, indexes), csv.getColumnsName(indexes));
 	}
 
 	@Override

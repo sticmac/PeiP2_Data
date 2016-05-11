@@ -32,13 +32,13 @@ class DataCSV {
 	}
 
 
-	public String[][] toArray(String columnSort) {
+	public String[][] toArray(String columnSort, List<Integer> indexes) {
 		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
 			.limit(10) // Limit to 10 results
-			.map(this::extractColumns)
-			.toArray(String[][]::new); //Converts the stream into an array 
+			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new)) // Select columns according to indexes
+			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
 
@@ -72,9 +72,5 @@ class DataCSV {
 		catch (NumberFormatException e) {
 			return bstr.compareTo(cstr);
 		}
-	}
-
-	private String[] extractColumns(ArrayList<String> b) {
-		return new String[]{b.get(6), b.get(2), b.get(selectedColumn)};
 	}
 }
