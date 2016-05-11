@@ -7,13 +7,21 @@ class DataCSV {
 	private ReadCSV csv;
 	private int selectedColumn;
 
+	/**
+	 * Default constructor of <code>DataCSV</code>
+	 * @param csv a ReadCSV object (parsed CSV file)
+	 */
 	public DataCSV(ReadCSV csv) {
 		this.csv = csv;
 
 		filterList = new ArrayList<Predicate<ArrayList<String>>>();
 	}
 
-	//Filters the parsed CSV as a Stream and returns another Stream filtered with filters in filterList. (We like filters).
+	/**
+	 * Apply all the filters in the filterlist to the data stored from <code>CSV</code> file
+	 * @param s the stream which we apply the filters on
+	 * @return the filtered stream
+	 */
 	public Stream<ArrayList<String>> miaouFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
 		for(Predicate<ArrayList<String>> lambda: filterList) {
@@ -22,16 +30,25 @@ class DataCSV {
 		return t;
 	}
 
-	//Add filter to filterList
+	/**
+	 * Add a filter to the filter list
+	 * @param filter the filter to add to the list
+	 */
 	public void addFilter(Predicate<ArrayList<String>> filter) {
 		filterList.add(filter);
 	}
 
+	/**
+	 * Clear the filter list
+	 */
 	public void clearFilterList() {
 		filterList.clear();
 	}
 
-
+	/**
+	 * Return the filtered data into a two-dimensions array of String
+	 * @return the filtered data into a two-dimensions array of String
+	 */
 	public String[][] toArray(String columnSort, List<Integer> indexes) {
 		selectedColumn = findIndexForColumn(columnSort);
 		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
@@ -42,10 +59,19 @@ class DataCSV {
 	}
 
 
+	/**
+	 * Find the index in which the column with the given name is stored
+	 * @param name the searched column
+	 * @return the index of the searched column
+	 */
 	public int findIndexForColumn(String name) {
 		return csv.findIndexForColumn(name);
 	}
 
+	/**
+	 * Returns all the <code>CSV</code>'s columns' name
+	 * @return the column's name
+	 */
 	public String[] getColumnsName() {
 		return csv.getColumns().toArray(new String[csv.getColumns().size()]);
 	}
