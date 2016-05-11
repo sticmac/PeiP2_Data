@@ -59,6 +59,8 @@ class GUI extends JFrame implements ActionListener {
 		academies = new JComboBox<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
+		results = new JTable();
+
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
 		rules.addActionListener(this);
@@ -81,6 +83,7 @@ class GUI extends JFrame implements ActionListener {
 	}
 
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
+		this.remove(results);
 		results = new JTable(rowData, columnNames);
 		results.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		results.doLayout();
@@ -99,6 +102,7 @@ class GUI extends JFrame implements ActionListener {
 		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
+
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 		indexes.add(6);
 		indexes.add(2);
