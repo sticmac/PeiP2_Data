@@ -22,10 +22,13 @@ class GUI extends JFrame implements ActionListener {
 	private JComboBox sort;
 	private JMenu options;
 	private JMenu plus;
+	private JMenu selectColumnsMenu;
 	private JMenuItem quit;
 	private JMenuItem rules;
 	private JMenuItem aboutus;
 	private JButton search;
+
+	private ArrayList<JCheckBoxMenuItem> selectColumnsButtons;
 	
 	/**
 	 * Constructeur de la <code>GUI</code>
@@ -41,14 +44,28 @@ class GUI extends JFrame implements ActionListener {
 		bar = new JMenuBar();
 		options = new JMenu("Options");
 		plus = new JMenu("Plus");
+		selectColumnsMenu = new JMenu("Columns");
+
 		quit = new JMenuItem("Quitter");
 		aboutus = new JMenuItem("À propos");
 		rules = new JMenuItem("Règles");
+
 		options.add(quit);
 		bar.add(options);
 		plus.add(aboutus);
 		plus.add(rules);
+
+		selectColumnsButtons = new ArrayList<JCheckBoxMenuItem>();
+
+		for(String column: csv.getColumnsName()) {
+			JCheckBoxMenuItem columnButton = new JCheckBoxMenuItem(column);
+			selectColumnsButtons.add(columnButton);
+			selectColumnsMenu.add(columnButton);
+		}
+
+		bar.add(options);
 		bar.add(plus);
+		bar.add(selectColumnsMenu);
 		this.setJMenuBar(bar);
 		
 		search = new JButton("Search");
@@ -92,11 +109,14 @@ class GUI extends JFrame implements ActionListener {
 		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
 		csv.addFilter(b -> !b.get(csv.findIndexForColumn(strSort)).isEmpty());
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		indexes.add(6);
-		indexes.add(2);
-		indexes.add(csv.findIndexForColumn(strSort));
-		indexes.add(7);
-		indexes.add(9);
+
+		for(JCheckBoxMenuItem column: selectColumnsButtons) {
+			if(!column.isSelected()) continue;
+			indexes.add(csv.findIndexForColumn(column.getText()));
+		}
+
+		if(indexes.size() < 1) return; // Don't search if no column was selected
+
 		displayResults(csv.toArray(strSort, indexes), csv.getColumnsName(indexes));
 	}
 
