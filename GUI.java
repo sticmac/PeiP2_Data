@@ -6,6 +6,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.*;
+import javax.swing.plaf.basic.BasicCheckBoxMenuItemUI;
+
+
+class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
+   @Override
+   protected void doClick(MenuSelectionManager msm) {
+      menuItem.doClick(0);
+   }
+}
 
 /**
  * Classe de la <code>GUI</code>
@@ -59,6 +68,7 @@ class GUI extends JFrame implements ActionListener {
 
 		for(String column: csv.getColumnsName()) {
 			JCheckBoxMenuItem columnButton = new JCheckBoxMenuItem(column);
+			columnButton.setUI(new StayOpenCheckBoxMenuItemUI());
 			selectColumnsButtons.add(columnButton);
 			selectColumnsMenu.add(columnButton);
 		}
