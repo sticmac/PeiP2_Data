@@ -121,11 +121,6 @@ class GUI extends JFrame implements ActionListener {
 		csv.clearFilterList();
 
 		String strSort = (String)sort.getSelectedItem();
-		/*String discipline = (String)disciplines.getSelectedItem();
-		String academy = (String)academies.getSelectedItem();
-
-		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
-		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));*/
 		for (Criteria c : criterias) {
 			if(!c.isEnabled()) continue;
 			String value = (String)c.getSelectedItem();
