@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.*;
 import javax.swing.plaf.basic.BasicCheckBoxMenuItemUI;
+import javax.swing.table.*;
 
 
 class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
@@ -14,6 +15,20 @@ class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
    protected void doClick(MenuSelectionManager msm) {
       menuItem.doClick(0);
    }
+}
+
+class JTableAutoSize extends JTable {
+	public JTableAutoSize(Object[][] rowData, Object[] columnNames) {
+		super(rowData, columnNames);
+	}
+    @Override
+       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+           Component component = super.prepareRenderer(renderer, row, column);
+           int rendererWidth = component.getPreferredSize().width;
+           TableColumn tableColumn = getColumnModel().getColumn(column);
+           tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+           return component;
+        }
 }
 
 /**
@@ -38,6 +53,8 @@ class GUI extends JFrame implements ActionListener {
 	private JMenuItem rules;
 	private JMenuItem aboutus;
 	private JButton search;
+
+	private JScrollPane scrollPane;
 
 	private ArrayList<JCheckBoxMenuItem> selectColumnsButtons;
 	
@@ -88,8 +105,6 @@ class GUI extends JFrame implements ActionListener {
 		search = new JButton("Search");
 		sort = new JComboBox<String>(csv.getColumnsName());
 
-		results = new JTable();
-
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
 		rules.addActionListener(this);
@@ -106,16 +121,20 @@ class GUI extends JFrame implements ActionListener {
 		choices.add(search);
 		this.add(choices, BorderLayout.WEST);
 
+		this.scrollPane = new JScrollPane();
+		this.add(scrollPane, BorderLayout.CENTER);
+
 		setVisible(true);
 		pack();
 	}
 
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
-		this.remove(results);
-		results = new JTable(rowData, columnNames);
-		results.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		if(results != null) this.remove(results);
+		results = new JTableAutoSize(rowData, columnNames);
+		results.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		results.doLayout();
-		this.add(results, BorderLayout.CENTER);
+		this.scrollPane.getViewport().add(results);
+		results.setFillsViewportHeight(true);
 		pack();
 	}
 	
