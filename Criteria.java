@@ -13,6 +13,7 @@ class Criteria<T> extends JPanel{
 		this.enable = new JCheckBox();
 
 		this.setLayout(new FlowLayout());
+		this.add(new JLabel(column));
 		this.add(enable);
 		this.add(list);
 
