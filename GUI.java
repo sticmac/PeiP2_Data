@@ -29,8 +29,7 @@ class GUI extends JFrame implements ActionListener {
 	private JTable results;
 	private JComboBox sort;
 
-	private Criteria disciplines;
-	private Criteria academies;
+	private ArrayList<Criteria> criterias;
 
 	private JMenu options;
 	private JMenu plus;
@@ -80,9 +79,11 @@ class GUI extends JFrame implements ActionListener {
 		bar.add(selectColumnsMenu);
 		this.setJMenuBar(bar);
 		
+		criterias = new ArrayList<Criteria>();
+		criterias.add(new Criteria<String>("discipline", csv.getColumnValues("discipline")));
+		criterias.add(new Criteria<String>("academie", csv.getColumnValues("academie")));
+
 		search = new JButton("Search");
-		disciplines = new Criteria<String>(csv.getColumnValues("discipline"));
-		academies = new Criteria<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
 		results = new JTable();
@@ -96,8 +97,9 @@ class GUI extends JFrame implements ActionListener {
 		
 		//Options
 		Box choices = new Box(BoxLayout.Y_AXIS);
-		choices.add(disciplines);
-		choices.add(academies);
+		for (Criteria c : criterias) {
+			choices.add(c);
+		}
 		choices.add(sort);
 		choices.add(search);
 		this.add(choices, BorderLayout.WEST);
@@ -118,12 +120,17 @@ class GUI extends JFrame implements ActionListener {
 	private void processSearch() {
 		csv.clearFilterList();
 
-		String discipline = (String)disciplines.getSelectedItem();
-		String academy = (String)academies.getSelectedItem();
 		String strSort = (String)sort.getSelectedItem();
+		/*String discipline = (String)disciplines.getSelectedItem();
+		String academy = (String)academies.getSelectedItem();
 
 		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
-		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));
+		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));*/
+		for (Criteria c : criterias) {
+			if(!c.isEnabled()) continue;
+			String value = (String)c.getSelectedItem();
+			csv.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(value));
+		}
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
 

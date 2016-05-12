@@ -5,10 +5,12 @@ import java.awt.event.*;
 class Criteria<T> extends JPanel{
 	private JComboBox<T> list;
 	private JCheckBox enable;
+	private String column;
 
-	public Criteria(T[] items) {
-		list = new JComboBox<T>(items);
-		enable = new JCheckBox();
+	public Criteria(String column, T[] items) {
+		this.column = column;
+		this.list = new JComboBox<T>(items);
+		this.enable = new JCheckBox();
 
 		this.setLayout(new FlowLayout());
 		this.add(enable);
@@ -26,5 +28,13 @@ class Criteria<T> extends JPanel{
 
 	public Object getSelectedItem() {
 		return list.getSelectedItem();
+	}
+
+	public String getColumn() {
+		return column;
+	}
+
+	public boolean isEnabled() {
+		return enable.isSelected();
 	}
 }
