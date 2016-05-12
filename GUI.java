@@ -80,8 +80,10 @@ class GUI extends JFrame implements ActionListener {
 		this.setJMenuBar(bar);
 		
 		criterias = new ArrayList<Criteria>();
+		criterias.add(new Criteria<String>("domaine", csv.getColumnValues("domaine")));
 		criterias.add(new Criteria<String>("discipline", csv.getColumnValues("discipline")));
 		criterias.add(new Criteria<String>("academie", csv.getColumnValues("academie")));
+		criterias.add(new Criteria<String>("etablissement", csv.getColumnValues("etablissement")));
 
 		search = new JButton("Search");
 		sort = new JComboBox<String>(csv.getColumnsName());
