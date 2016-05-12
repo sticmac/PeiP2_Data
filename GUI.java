@@ -32,21 +32,19 @@ class JTableAutoSize extends JTable {
 }
 
 /**
- * Classe de la <code>GUI</code>
+ * <code>GUI</code> class
  * @author Julien Lemaire
- * @author Guillaume Casagrande
+ * @author Pierre-Emmanuel Novac 
  * @version 1.0
  */
 class GUI extends JFrame implements ActionListener {
-	//Elements du menu
 	private DataCSV csv;
 	private JMenuBar bar;
 	
 	private JTable results;
 	private JComboBox sort;
 
-	private JComboBox disciplines;
-	private JComboBox academies;
+	private ArrayList<Criteria> criterias;
 
 	private JMenu options;
 	private JMenu plus;
@@ -98,9 +96,13 @@ class GUI extends JFrame implements ActionListener {
 		bar.add(selectColumnsMenu);
 		this.setJMenuBar(bar);
 		
+		criterias = new ArrayList<Criteria>();
+		criterias.add(new Criteria<String>("domaine", csv.getColumnValues("domaine")));
+		criterias.add(new Criteria<String>("discipline", csv.getColumnValues("discipline")));
+		criterias.add(new Criteria<String>("academie", csv.getColumnValues("academie")));
+		criterias.add(new Criteria<String>("etablissement", csv.getColumnValues("etablissement")));
+
 		search = new JButton("Search");
-		disciplines = new JComboBox<String>(csv.getColumnValues("discipline"));
-		academies = new JComboBox<String>(csv.getColumnValues("academie"));
 		sort = new JComboBox<String>(csv.getColumnsName());
 
 		quit.addActionListener(this);
@@ -111,11 +113,10 @@ class GUI extends JFrame implements ActionListener {
 		getContentPane().setLayout(new BorderLayout());
 		
 		//Options
-		//JPanel options = new JPanel();
-		//options.setLayout(new GridLayout(3,1));
 		Box choices = new Box(BoxLayout.Y_AXIS);
-		choices.add(disciplines);
-		choices.add(academies);
+		for (Criteria c : criterias) {
+			choices.add(c);
+		}
 		choices.add(sort);
 		choices.add(search);
 		this.add(choices, BorderLayout.WEST);
@@ -140,12 +141,12 @@ class GUI extends JFrame implements ActionListener {
 	private void processSearch() {
 		csv.clearFilterList();
 
-		String discipline = (String)disciplines.getSelectedItem();
-		String academy = (String)academies.getSelectedItem();
 		String strSort = (String)sort.getSelectedItem();
-
-		csv.addFilter(b -> b.get(csv.findIndexForColumn("discipline")).equals(discipline));
-		csv.addFilter(b -> b.get(csv.findIndexForColumn("academie")).equals(academy));
+		for (Criteria c : criterias) {
+			if(!c.isEnabled()) continue;
+			String value = (String)c.getSelectedItem();
+			csv.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(value));
+		}
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
 
