@@ -2,6 +2,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+/**
+ * <code>DataCSV</code> class
+ * @author Julien Lemaire
+ * @author Pierre-Emmanuel Novac
+ */
 class DataCSV {
 	private ArrayList<Predicate<ArrayList<String>>> filterList;
 	private ReadCSV csv;
@@ -76,6 +81,11 @@ class DataCSV {
 		return csv.getColumns().toArray(new String[csv.getColumns().size()]);
 	}
 
+	/**
+	 * Returns all the name of the columns that match the given indexes
+	 * @param indexes a list of indexes
+	 * @return the name of the columns that match the indexes
+	 */
 	public String[] getColumnsName(List<Integer> indexes) {
 		ArrayList<String> columns = new ArrayList<String>();
 		for (Integer i : indexes) {
@@ -83,7 +93,12 @@ class DataCSV {
 		}
 		return columns.toArray(new String[columns.size()]);
 	}
-		
+	
+	/**
+	 * Returns the different value of the given column
+	 * @param column the column name
+	 * @return a String array, containing the values of the column
+	 */	
 	public String[] getColumnValues(String column) {
 		int i = findIndexForColumn(column);
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);

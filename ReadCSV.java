@@ -3,6 +3,12 @@ import java.util.*;
 //import java.util.stream.*;
 //import java.util.function.*;
 
+/**
+ * <code>ReadCSV</code> class, which is parsing a <code>CSV</code> file
+ * @author Julien Lemaire
+ * @author Pierre-Emmanuel Novac
+ * @version 1.0
+ */
 public class ReadCSV {
 	private final String DEFFILENAME = "fr-esr-insertion_professionnelle-master.csv";
 	private final char DELIM = ';';
@@ -23,6 +29,11 @@ public class ReadCSV {
 		}
 	}
 
+	/**
+	 * Returns the index of the given column
+	 * @param name the column name
+	 * @return the index of the given column
+	 */
 	public int findIndexForColumn(String name) {
 		for (int i = 0 ; i < columns.size() ; i++) {
 			if (columns.get(i).equals(name)) return i;
@@ -30,10 +41,18 @@ public class ReadCSV {
 		return -1;
 	}
 
+	/**
+	 * Returns the list of the parsed columns in the <code>CSV</code> file
+	 * @return the list of the parsed columns in the <code>CSV</code> file
+	 */
 	public ArrayList<String> getColumns() {
 		return columns;
 	}
 
+	/**
+	 * Return the whole data from the <code>CSV</code> file (without column names)
+	 * @return the whole data drom the <code>CSV</code> file
+	 */
 	public ArrayList<ArrayList<String>> getData() {
 		return this.data;
 	}
@@ -84,6 +103,9 @@ public class ReadCSV {
 
 	}
 
+	/**
+	 * Parsing the default <code>CSV</code> file
+	 */
 	public ReadCSV() {
 //		System.err.println("No file name given. Using default: "+DEFFILENAME);
 		this(null);
