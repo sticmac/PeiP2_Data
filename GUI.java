@@ -50,7 +50,7 @@ class GUI extends JFrame implements ActionListener {
 	private JMenu plus;
 	private JMenu selectColumnsMenu;
 	private JMenuItem quit;
-	private JMenuItem rules;
+
 	private JMenuItem aboutus;
 	private JButton search;
 
@@ -75,12 +75,10 @@ class GUI extends JFrame implements ActionListener {
 
 		quit = new JMenuItem("Quitter");
 		aboutus = new JMenuItem("À propos");
-		rules = new JMenuItem("Règles");
 
 		options.add(quit);
 		bar.add(options);
 		plus.add(aboutus);
-		plus.add(rules);
 
 		selectColumnsButtons = new ArrayList<JCheckBoxMenuItem>();
 
@@ -92,8 +90,8 @@ class GUI extends JFrame implements ActionListener {
 		}
 
 		bar.add(options);
-		bar.add(plus);
 		bar.add(selectColumnsMenu);
+		bar.add(plus);
 		this.setJMenuBar(bar);
 		
 		criteria = new ArrayList<Criterion>();
@@ -107,7 +105,7 @@ class GUI extends JFrame implements ActionListener {
 
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
-		rules.addActionListener(this);
+
 		search.addActionListener(this);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -165,8 +163,7 @@ class GUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == quit) { System.exit(0); }
-		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
-		else if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
+		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Copyleft - Julien Lemaire & Pierre-Emmanuel Novac - 2016", "A propos",  JOptionPane.INFORMATION_MESSAGE); }
 		else if (e.getSource() == search) { processSearch(); }
 	}
 }

@@ -33,7 +33,10 @@ class Criterion<T> extends JPanel{
 		list.setEnabled(false); //non activated by default: the user has to activate it
 	}
 
-	@Override
+	/**
+	 * Returns the selected item from the <code>JComboBox</code> in the <code>Criterion</code>
+	 * @return the selected item in the <code>Criterion</code>
+	 */
 	public Object getSelectedItem() {
 		return list.getSelectedItem();
 	}
