@@ -2,12 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class Criteria<T> extends JPanel{
+class Criterion<T> extends JPanel{
 	private JComboBox<T> list;
 	private JCheckBox enable;
 	private String column;
 
-	public Criteria(String column, T[] items) {
+	public Criterion(String column, T[] items) {
 		this.column = column;
 		this.list = new JComboBox<T>(items);
 		this.enable = new JCheckBox();

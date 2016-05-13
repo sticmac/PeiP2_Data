@@ -44,7 +44,7 @@ class GUI extends JFrame implements ActionListener {
 	private JTable results;
 	private JComboBox sort;
 
-	private ArrayList<Criteria> criterias;
+	private ArrayList<Criterion> criteria;
 
 	private JMenu options;
 	private JMenu plus;
@@ -96,11 +96,11 @@ class GUI extends JFrame implements ActionListener {
 		bar.add(selectColumnsMenu);
 		this.setJMenuBar(bar);
 		
-		criterias = new ArrayList<Criteria>();
-		criterias.add(new Criteria<String>("domaine", csv.getColumnValues("domaine")));
-		criterias.add(new Criteria<String>("discipline", csv.getColumnValues("discipline")));
-		criterias.add(new Criteria<String>("academie", csv.getColumnValues("academie")));
-		criterias.add(new Criteria<String>("etablissement", csv.getColumnValues("etablissement")));
+		criteria = new ArrayList<Criterion>();
+		criteria.add(new Criterion<String>("domaine", csv.getColumnValues("domaine")));
+		criteria.add(new Criterion<String>("discipline", csv.getColumnValues("discipline")));
+		criteria.add(new Criterion<String>("academie", csv.getColumnValues("academie")));
+		criteria.add(new Criterion<String>("etablissement", csv.getColumnValues("etablissement")));
 
 		search = new JButton("Search");
 		sort = new JComboBox<String>(csv.getColumnsName());
@@ -114,7 +114,7 @@ class GUI extends JFrame implements ActionListener {
 		
 		//Options
 		Box choices = new Box(BoxLayout.Y_AXIS);
-		for (Criteria c : criterias) {
+		for (Criterion c : criteria) {
 			choices.add(c);
 		}
 		choices.add(sort);
@@ -142,7 +142,7 @@ class GUI extends JFrame implements ActionListener {
 		csv.clearFilterList();
 
 		String strSort = (String)sort.getSelectedItem();
-		for (Criteria c : criterias) {
+		for (Criterion c : criteria) {
 			if(!c.isEnabled()) continue;
 			String value = (String)c.getSelectedItem();
 			csv.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(value));
