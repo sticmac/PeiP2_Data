@@ -118,6 +118,7 @@ class GUI extends JFrame implements ActionListener {
 		}
 		JPanel sortPanel = new JPanel();
 		sortPanel.setLayout(new FlowLayout());
+		sortPanel.add(new JLabel("Classement par : "));
 		sortPanel.add(sort);
 		ButtonGroup sortOrder = new ButtonGroup();
 		dec = new JRadioButton("Décroissant");
