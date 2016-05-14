@@ -17,12 +17,7 @@ class Criterion<T> extends JPanel{
 		this.add(enable);
 		this.add(list);
 
-		enable.addItemListener(new ItemListener(){
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				list.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-			}
-		});
+		enable.addItemListener((e) -> list.setEnabled(e.getStateChange() == ItemEvent.SELECTED));
 
 		list.setEnabled(false); //non activated by default: the user has to activate it
 	}
