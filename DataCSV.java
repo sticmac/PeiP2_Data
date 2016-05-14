@@ -11,6 +11,7 @@ class DataCSV {
 	private ArrayList<Predicate<ArrayList<String>>> filterList;
 	private ReadCSV csv;
 	private int selectedColumn;
+	private int order;
 
 	/**
 	 * Default constructor of <code>DataCSV</code>
@@ -18,6 +19,7 @@ class DataCSV {
 	 */
 	public DataCSV(ReadCSV csv) {
 		this.csv = csv;
+		this.order = 1;
 
 		filterList = new ArrayList<Predicate<ArrayList<String>>>();
 	}
@@ -74,6 +76,14 @@ class DataCSV {
 	}
 
 	/**
+	 * Set the sort order
+	 * @param order the new sort order
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	/**
 	 * Returns all the <code>CSV</code>'s columns' name
 	 * @return the column's name
 	 */
@@ -108,10 +118,10 @@ class DataCSV {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);
 		try {
-			return -Float.valueOf(bstr).compareTo(Float.valueOf(cstr));
+			return order*(Float.valueOf(bstr).compareTo(Float.valueOf(cstr)));
 		}
 		catch (NumberFormatException e) {
-			return bstr.compareTo(cstr);
+			return order*(bstr.compareTo(cstr));
 		}
 	}
 }

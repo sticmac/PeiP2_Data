@@ -48,6 +48,8 @@ class GUI extends JFrame implements ActionListener {
 	private JMenuItem quit;
 	private JMenuItem aboutus;
 
+	private JRadioButton inc;
+	private JRadioButton dec;
 	private JButton search;
 	private JTextField numberOfElements;
 
@@ -114,7 +116,21 @@ class GUI extends JFrame implements ActionListener {
 		for (Criterion c : criteria) {
 			choices.add(c);
 		}
-		choices.add(sort);
+		JPanel sortPanel = new JPanel();
+		sortPanel.setLayout(new FlowLayout());
+		sortPanel.add(sort);
+		ButtonGroup sortOrder = new ButtonGroup();
+		dec = new JRadioButton("Décroissant");
+		inc = new JRadioButton("Croissant");
+		inc.addActionListener(this);
+		dec.addActionListener(this);
+		sortOrder.add(inc);
+		inc.setSelected(true);
+		sortOrder.add(dec);
+		sortPanel.add(dec);
+		sortPanel.add(inc);
+		choices.add(sortPanel);
+		
 		JPanel limit = new JPanel();
 		limit.setLayout(new FlowLayout());
 		limit.add(new JLabel("Nombre de résultats :"));
@@ -182,5 +198,7 @@ class GUI extends JFrame implements ActionListener {
 		if (e.getSource() == quit) { System.exit(0); }
 		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Copyleft - Julien Lemaire & Pierre-Emmanuel Novac - 2016", "A propos",  JOptionPane.INFORMATION_MESSAGE); }
 		else if (e.getSource() == search) { processSearch(); }
+		else if (e.getSource() == inc) { csv.setOrder(1); }
+	       	else if (e.getSource() == dec) { csv.setOrder(-1); }	
 	}
 }
