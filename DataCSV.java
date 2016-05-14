@@ -27,7 +27,7 @@ class DataCSV {
 	 * @param s the stream which we apply the filters on
 	 * @return the filtered stream
 	 */
-	public Stream<ArrayList<String>> miaouFilter(Stream<ArrayList<String>> s) {
+	public Stream<ArrayList<String>> applyFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
 		for(Predicate<ArrayList<String>> lambda: filterList) {
 			t = t.filter(lambda); 
@@ -54,12 +54,12 @@ class DataCSV {
 	 * Return the filtered data into a two-dimensions array of String
 	 * @return the filtered data into a two-dimensions array of String
 	 */
-	public String[][] toArray(String columnSort, List<Integer> indexes) {
+	public String[][] toArray(String columnSort, List<Integer> indexes, int numberOfElements) {
 		selectedColumn = findIndexForColumn(columnSort);
-		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
+		return applyFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
 			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new)) // Select columns according to indexes
-			.limit(10) // Limit to 10 results
+			.limit(numberOfElements) // Limit to 10 results
 			.toArray(String[][]::new); //Converts the stream into an array
 	}
 

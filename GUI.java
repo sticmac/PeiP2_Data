@@ -1,10 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
 import java.util.*;
 import javax.swing.plaf.basic.BasicCheckBoxMenuItemUI;
 import javax.swing.table.*;
@@ -50,9 +46,10 @@ class GUI extends JFrame implements ActionListener {
 	private JMenu plus;
 	private JMenu selectColumnsMenu;
 	private JMenuItem quit;
-
 	private JMenuItem aboutus;
+
 	private JButton search;
+	private JTextField numberOfElements;
 
 	private JScrollPane scrollPane;
 
@@ -75,6 +72,8 @@ class GUI extends JFrame implements ActionListener {
 
 		quit = new JMenuItem("Quitter");
 		aboutus = new JMenuItem("À propos");
+
+		numberOfElements = new JTextField(3);
 
 		options.add(quit);
 		bar.add(options);
@@ -109,14 +108,21 @@ class GUI extends JFrame implements ActionListener {
 		search.addActionListener(this);
 		
 		getContentPane().setLayout(new BorderLayout());
-		
+
 		//Options
 		Box choices = new Box(BoxLayout.Y_AXIS);
 		for (Criterion c : criteria) {
 			choices.add(c);
 		}
 		choices.add(sort);
+		JPanel limit = new JPanel();
+		limit.setLayout(new FlowLayout());
+		limit.add(new JLabel("Nombre de résultats :"));
+		limit.add(numberOfElements);
+		choices.add(limit);
+
 		choices.add(search);
+
 		this.add(choices, BorderLayout.WEST);
 
 		this.scrollPane = new JScrollPane();
@@ -126,6 +132,9 @@ class GUI extends JFrame implements ActionListener {
 		pack();
 	}
 
+	/**
+	 * Display the results on a JTable object
+	 */
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
 		if(results != null) this.remove(results);
 		results = new JTableAutoSize(rowData, columnNames);
@@ -136,6 +145,9 @@ class GUI extends JFrame implements ActionListener {
 		pack();
 	}
 	
+	/**
+	 * Execute the requested search
+	 */
 	private void processSearch() {
 		csv.clearFilterList();
 
@@ -147,6 +159,7 @@ class GUI extends JFrame implements ActionListener {
 		}
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
+		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("nd")));
 
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 
@@ -157,7 +170,11 @@ class GUI extends JFrame implements ActionListener {
 
 		if(indexes.size() < 1) return; // Don't search if no column was selected
 
-		displayResults(csv.toArray(strSort, indexes), csv.getColumnsName(indexes));
+		try {
+			displayResults(csv.toArray(strSort, indexes, Integer.parseInt(numberOfElements.getText())), csv.getColumnsName(indexes));
+		} catch (NumberFormatException e) {
+			displayResults(csv.toArray(strSort, indexes, 10), csv.getColumnsName(indexes)); //We put 10 as a default value if no value is set for the number of results to display
+		}
 	}
 
 	@Override
