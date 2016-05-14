@@ -1,10 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
 import java.util.*;
 import javax.swing.plaf.basic.BasicCheckBoxMenuItemUI;
 import javax.swing.table.*;
@@ -50,9 +46,12 @@ class GUI extends JFrame implements ActionListener {
 	private JMenu plus;
 	private JMenu selectColumnsMenu;
 	private JMenuItem quit;
-	private JMenuItem rules;
 	private JMenuItem aboutus;
+
+	private JRadioButton inc;
+	private JRadioButton dec;
 	private JButton search;
+	private JTextField numberOfElements;
 
 	private JScrollPane scrollPane;
 
@@ -75,12 +74,12 @@ class GUI extends JFrame implements ActionListener {
 
 		quit = new JMenuItem("Quitter");
 		aboutus = new JMenuItem("À propos");
-		rules = new JMenuItem("Règles");
+
+		numberOfElements = new JTextField(3);
 
 		options.add(quit);
 		bar.add(options);
 		plus.add(aboutus);
-		plus.add(rules);
 
 		selectColumnsButtons = new ArrayList<JCheckBoxMenuItem>();
 
@@ -92,8 +91,8 @@ class GUI extends JFrame implements ActionListener {
 		}
 
 		bar.add(options);
-		bar.add(plus);
 		bar.add(selectColumnsMenu);
+		bar.add(plus);
 		this.setJMenuBar(bar);
 		
 		criteria = new ArrayList<Criterion>();
@@ -107,18 +106,39 @@ class GUI extends JFrame implements ActionListener {
 
 		quit.addActionListener(this);
 		aboutus.addActionListener(this);
-		rules.addActionListener(this);
+
 		search.addActionListener(this);
 		
 		getContentPane().setLayout(new BorderLayout());
-		
+
 		//Options
 		Box choices = new Box(BoxLayout.Y_AXIS);
 		for (Criterion c : criteria) {
 			choices.add(c);
 		}
-		choices.add(sort);
+		JPanel sortPanel = new JPanel();
+		sortPanel.setLayout(new FlowLayout());
+		sortPanel.add(sort);
+		ButtonGroup sortOrder = new ButtonGroup();
+		dec = new JRadioButton("Décroissant");
+		inc = new JRadioButton("Croissant");
+		inc.addActionListener(this);
+		dec.addActionListener(this);
+		sortOrder.add(inc);
+		inc.setSelected(true);
+		sortOrder.add(dec);
+		sortPanel.add(dec);
+		sortPanel.add(inc);
+		choices.add(sortPanel);
+		
+		JPanel limit = new JPanel();
+		limit.setLayout(new FlowLayout());
+		limit.add(new JLabel("Nombre de résultats :"));
+		limit.add(numberOfElements);
+		choices.add(limit);
+
 		choices.add(search);
+
 		this.add(choices, BorderLayout.WEST);
 
 		this.scrollPane = new JScrollPane();
@@ -128,6 +148,9 @@ class GUI extends JFrame implements ActionListener {
 		pack();
 	}
 
+	/**
+	 * Display the results on a JTable object
+	 */
 	public void displayResults(Object[][] rowData, Object[] columnNames) {
 		if(results != null) this.remove(results);
 		results = new JTableAutoSize(rowData, columnNames);
@@ -138,6 +161,9 @@ class GUI extends JFrame implements ActionListener {
 		pack();
 	}
 	
+	/**
+	 * Execute the requested search
+	 */
 	private void processSearch() {
 		csv.clearFilterList();
 
@@ -149,6 +175,7 @@ class GUI extends JFrame implements ActionListener {
 		}
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).isEmpty()));
 		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("ns")));
+		csv.addFilter(b -> !(b.get(csv.findIndexForColumn(strSort)).equals("nd")));
 
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 
@@ -159,14 +186,19 @@ class GUI extends JFrame implements ActionListener {
 
 		if(indexes.size() < 1) return; // Don't search if no column was selected
 
-		displayResults(csv.toArray(strSort, indexes), csv.getColumnsName(indexes));
+		try {
+			displayResults(csv.toArray(strSort, indexes, Integer.parseInt(numberOfElements.getText())), csv.getColumnsName(indexes));
+		} catch (NumberFormatException e) {
+			displayResults(csv.toArray(strSort, indexes, 10), csv.getColumnsName(indexes)); //We put 10 as a default value if no value is set for the number of results to display
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == quit) { System.exit(0); }
-		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Miaou", "Miaou",  JOptionPane.INFORMATION_MESSAGE); }
-		else if (e.getSource() == rules) { JOptionPane.showMessageDialog(this, "Nyan", "Règles", JOptionPane.INFORMATION_MESSAGE); }
+		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Copyleft - Julien Lemaire & Pierre-Emmanuel Novac - 2016", "A propos",  JOptionPane.INFORMATION_MESSAGE); }
 		else if (e.getSource() == search) { processSearch(); }
+		else if (e.getSource() == inc) { csv.setOrder(1); }
+	       	else if (e.getSource() == dec) { csv.setOrder(-1); }	
 	}
 }

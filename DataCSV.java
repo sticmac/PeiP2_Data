@@ -2,10 +2,16 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+/**
+ * <code>DataCSV</code> class
+ * @author Julien Lemaire
+ * @author Pierre-Emmanuel Novac
+ */
 class DataCSV {
 	private ArrayList<Predicate<ArrayList<String>>> filterList;
 	private ReadCSV csv;
 	private int selectedColumn;
+	private int order;
 
 	/**
 	 * Default constructor of <code>DataCSV</code>
@@ -13,6 +19,7 @@ class DataCSV {
 	 */
 	public DataCSV(ReadCSV csv) {
 		this.csv = csv;
+		this.order = 1;
 
 		filterList = new ArrayList<Predicate<ArrayList<String>>>();
 	}
@@ -22,7 +29,7 @@ class DataCSV {
 	 * @param s the stream which we apply the filters on
 	 * @return the filtered stream
 	 */
-	public Stream<ArrayList<String>> miaouFilter(Stream<ArrayList<String>> s) {
+	public Stream<ArrayList<String>> applyFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
 		for(Predicate<ArrayList<String>> lambda: filterList) {
 			t = t.filter(lambda); 
@@ -49,12 +56,12 @@ class DataCSV {
 	 * Return the filtered data into a two-dimensions array of String
 	 * @return the filtered data into a two-dimensions array of String
 	 */
-	public String[][] toArray(String columnSort, List<Integer> indexes) {
+	public String[][] toArray(String columnSort, List<Integer> indexes, int numberOfElements) {
 		selectedColumn = findIndexForColumn(columnSort);
-		return miaouFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
+		return applyFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
 			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new)) // Select columns according to indexes
-			.limit(10) // Limit to 10 results
+			.limit(numberOfElements) // Limit to 10 results
 			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
@@ -69,6 +76,14 @@ class DataCSV {
 	}
 
 	/**
+	 * Set the sort order
+	 * @param order the new sort order
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	/**
 	 * Returns all the <code>CSV</code>'s columns' name
 	 * @return the column's name
 	 */
@@ -76,6 +91,11 @@ class DataCSV {
 		return csv.getColumns().toArray(new String[csv.getColumns().size()]);
 	}
 
+	/**
+	 * Returns all the name of the columns that match the given indexes
+	 * @param indexes a list of indexes
+	 * @return the name of the columns that match the indexes
+	 */
 	public String[] getColumnsName(List<Integer> indexes) {
 		ArrayList<String> columns = new ArrayList<String>();
 		for (Integer i : indexes) {
@@ -83,7 +103,12 @@ class DataCSV {
 		}
 		return columns.toArray(new String[columns.size()]);
 	}
-		
+	
+	/**
+	 * Returns the different value of the given column
+	 * @param column the column name
+	 * @return a String array, containing the values of the column
+	 */	
 	public String[] getColumnValues(String column) {
 		int i = findIndexForColumn(column);
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
@@ -93,10 +118,10 @@ class DataCSV {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);
 		try {
-			return -Float.valueOf(bstr).compareTo(Float.valueOf(cstr));
+			return order*(Float.valueOf(bstr).compareTo(Float.valueOf(cstr)));
 		}
 		catch (NumberFormatException e) {
-			return bstr.compareTo(cstr);
+			return order*(bstr.compareTo(cstr));
 		}
 	}
 }
