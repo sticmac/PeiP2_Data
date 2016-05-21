@@ -79,6 +79,8 @@ class GUI extends JFrame {
 		resultsTable = new ResultsTable();
 		this.add(resultsTable, BorderLayout.CENTER);
 
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // Exit on click on close button
+
 		setVisible(true);
 		pack();
 	}
