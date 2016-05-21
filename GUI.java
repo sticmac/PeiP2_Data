@@ -27,10 +27,27 @@ class JTableAutoSize extends JTable {
         }
 }
 
+class ColumnsMenu extends JMenu {
+	ColumnsMenu(String[] columnsName) {
+		super("Columns");
+		ArrayList<JCheckBoxMenuItem> selectColumnsButtons = new ArrayList<JCheckBoxMenuItem>();
+		for(String column: columnsName) {
+			JCheckBoxMenuItem columnButton = new JCheckBoxMenuItem(column);
+			columnButton.setUI(new StayOpenCheckBoxMenuItemUI());
+			for(String c: Config.defaultColumns) {
+				if(c.equals(column)) columnButton.setSelected(true); // Set default checkbox state
+			}
+			selectColumnsButtons.add(columnButton);
+			this.add(columnButton);
+		}
+	}
+}
+
+
 /**
  * <code>GUI</code> class
  * @author Julien Lemaire
- * @author Pierre-Emmanuel Novac 
+ * @author Pierre-Emmanuel Novac
  * @version 1.0
  */
 class GUI extends JFrame implements ActionListener {
@@ -40,7 +57,7 @@ class GUI extends JFrame implements ActionListener {
 	private JTable results;
 	private JComboBox sort;
 
-	private ArrayList<Criterion> criteria;
+	private JPanel criteria;
 
 	private JMenu options;
 	private JMenu plus;
@@ -48,8 +65,6 @@ class GUI extends JFrame implements ActionListener {
 	private JMenuItem quit;
 	private JMenuItem aboutus;
 
-	private JRadioButton inc;
-	private JRadioButton dec;
 	private JButton search;
 	private JTextField numberOfElements;
 
@@ -63,82 +78,96 @@ class GUI extends JFrame implements ActionListener {
 	public GUI(DataCSV csv) {
 		this.csv = csv;
 
-		//General options about 
-		setTitle("Aide au choix des masters");
-
-		//Menu set
-		bar = new JMenuBar();
-		options = new JMenu("Options");
-		plus = new JMenu("Plus");
-		selectColumnsMenu = new JMenu("Columns");
-
-		quit = new JMenuItem("Quitter");
-		aboutus = new JMenuItem("À propos");
-
-		numberOfElements = new JTextField(3);
-
-		options.add(quit);
-		bar.add(options);
-		plus.add(aboutus);
-
-		selectColumnsButtons = new ArrayList<JCheckBoxMenuItem>();
-
-		for(String column: csv.getColumnsName()) {
-			JCheckBoxMenuItem columnButton = new JCheckBoxMenuItem(column);
-			columnButton.setUI(new StayOpenCheckBoxMenuItemUI());
-			selectColumnsButtons.add(columnButton);
-			selectColumnsMenu.add(columnButton);
-		}
-
-		bar.add(options);
-		bar.add(selectColumnsMenu);
-		bar.add(plus);
-		this.setJMenuBar(bar);
-		
-		criteria = new ArrayList<Criterion>();
-		criteria.add(new Criterion<String>("domaine", csv.getColumnValues("domaine")));
-		criteria.add(new Criterion<String>("discipline", csv.getColumnValues("discipline")));
-		criteria.add(new Criterion<String>("academie", csv.getColumnValues("academie")));
-		criteria.add(new Criterion<String>("etablissement", csv.getColumnValues("etablissement")));
-
-		search = new JButton("Search");
-		sort = new JComboBox<String>(csv.getColumnsName());
-
-		quit.addActionListener(this);
-		aboutus.addActionListener(this);
-
-		search.addActionListener(this);
-		
+		// Main layout
 		getContentPane().setLayout(new BorderLayout());
 
-		//Options
+		// Window title
+		setTitle(Config::windowTitle);
+
+		// Menu bar
+		bar = new JMenuBar();
+
+		// Options menu
+		options = new JMenu("Options");
+		quit = new JMenuItem("Quit");
+		quit.addActionListener(this);
+		options.add(quit);
+		bar.add(options);
+
+		// Plus menu
+		plus = new JMenu("Plus");
+		aboutus = new JMenuItem("About");
+		aboutus.addActionListener(this);
+		plus.add(aboutus);
+		bar.add(plus);
+
+		bar.add(new ColumnsMenu(csv.getColumnsName()));
+
+		this.setJMenuBar(bar); // Add menu bar to window
+
+		// Search options box
 		Box choices = new Box(BoxLayout.Y_AXIS);
-		for (Criterion c : criteria) {
-			choices.add(c);
-		}
+
+		// Criteria selection panel
+		criteria = new JPanel();
+		criteria.setLayout(new BoxLayout(criteria, BoxLayout.PAGE_AXIS));
+
+		// Configure Criterion
+		Criterion.setNames(csv::getColumnsName);
+		Criterion.setValues(csv::getColumnValues);
+		Criterion.setRemove((b) -> {criteria.remove(b); this.pack();});
+
+		// Default criteria
+		for(String c: Config.defaultCriteria) criteria.add(new Criterion(c));
+
+		choices.add(criteria);
+
+		// Add criterion button
+		choices.add(new JButton("Add") { { addActionListener( (b) -> {
+				criteria.add(new Criterion("academie"));
+				GUI.this.pack();
+			});}});
+
+		// Search options panel
+		sort = new JComboBox<String>(csv.getColumnsName());
+
+		// Sort panel
 		JPanel sortPanel = new JPanel();
 		sortPanel.setLayout(new FlowLayout());
-		sortPanel.add(new JLabel("Classement par : "));
+		sortPanel.add(new JLabel("Sort by: "));
 		sortPanel.add(sort);
+
+		// Sort order
 		ButtonGroup sortOrder = new ButtonGroup();
-		dec = new JRadioButton("Décroissant");
-		inc = new JRadioButton("Croissant");
-		inc.addActionListener(this);
-		dec.addActionListener(this);
-		sortOrder.add(inc);
+		JRadioButton dec = new JRadioButton("Descending");
+		JRadioButton inc = new JRadioButton("Ascending");
 		inc.setSelected(true);
+		inc.addActionListener((e) -> csv.setOrder(1));
+		dec.addActionListener((e) -> csv.setOrder(-1));
+		sortOrder.add(inc);
 		sortOrder.add(dec);
 		sortPanel.add(dec);
 		sortPanel.add(inc);
+
 		choices.add(sortPanel);
-		
+
+		search = new JButton("Search");
+		search.addActionListener(this);
+
+		// Limit panel
 		JPanel limit = new JPanel();
+		numberOfElements = new JTextField(3);
 		limit.setLayout(new FlowLayout());
 		limit.add(new JLabel("Nombre de résultats :"));
 		limit.add(numberOfElements);
+
 		choices.add(limit);
 
+		// Search button
+		search = new JButton("Search");
+		search.addActionListener(this);
 		choices.add(search);
+
 
 		this.add(choices, BorderLayout.WEST);
 
@@ -169,7 +198,8 @@ class GUI extends JFrame implements ActionListener {
 		csv.clearFilterList();
 
 		String strSort = (String)sort.getSelectedItem();
-		for (Criterion c : criteria) {
+		for (Component cp : criteria.getComponents()) {
+			Criterion c = (Criterion)cp;
 			if(!c.isEnabled()) continue;
 			String value = (String)c.getSelectedItem();
 			csv.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(value));
@@ -199,7 +229,5 @@ class GUI extends JFrame implements ActionListener {
 		if (e.getSource() == quit) { System.exit(0); }
 		else if (e.getSource() == aboutus) { JOptionPane.showMessageDialog(this, "Copyleft - Julien Lemaire & Pierre-Emmanuel Novac - 2016", "A propos",  JOptionPane.INFORMATION_MESSAGE); }
 		else if (e.getSource() == search) { processSearch(); }
-		else if (e.getSource() == inc) { csv.setOrder(1); }
-	       	else if (e.getSource() == dec) { csv.setOrder(-1); }	
 	}
 }
