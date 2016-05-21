@@ -9,6 +9,11 @@ package sticmacpiernov.spreadsheet;
  */
 public class Spreadsheet {
 	public static void main(String[] args) {
-		GUI gui = new GUI(new DataCSV(new ReadCSV()));
+		ReadCSV csv;
+		if(args.length > 0)
+			csv = new ReadCSV(args[0]);
+		else
+			csv = new ReadCSV();
+		GUI gui = new GUI(new DataCSV(csv));
 	}
 }
