@@ -89,16 +89,16 @@ public class DataCSV {
 		this.clearFilterList();
 
 		for (Filter c: criteria) {
-			this.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(c.getValue())); // Add all filter followings the "equals" relationship
+			this.addFilter(b -> b.get(findIndexForColumn(c.getColumn())).equals(c.getValue())); // Add all filter followings the "equals" relationship
 		}
-		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).isEmpty())); // Filter out empty cells in sort column
-		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).equals("ns"))); // Filter out "ns" cells in sort column
-		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).equals("nd"))); // Filter out "nd" cells in sort column
+		this.addFilter(b -> !(b.get(findIndexForColumn(columnSort)).isEmpty())); // Filter out empty cells in sort column
+		this.addFilter(b -> !(b.get(findIndexForColumn(columnSort)).equals("ns"))); // Filter out "ns" cells in sort column
+		this.addFilter(b -> !(b.get(findIndexForColumn(columnSort)).equals("nd"))); // Filter out "nd" cells in sort column
 
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 
 		for(String column: selectedColumns) {
-			indexes.add(csv.findIndexForColumn(column));
+			indexes.add(findIndexForColumn(column));
 		}
 
 		if(indexes.size() < 1) return new ResultSet() { // Empty result if no column was selected
@@ -115,7 +115,7 @@ public class DataCSV {
 	/**
 	 * Returns the index of the given column
 	 * @param	name	the column name
-	 * @return	the	index of the given column
+	 * @return	the index of the given column, -1 when not found
 	 */
 	public int findIndexForColumn(String name) {
 		for (int i = 0 ; i < csv.getColumns().size() ; i++) {
@@ -152,6 +152,7 @@ public class DataCSV {
 	 */
 	public String[] getColumnValues(String column) {
 		int i = findIndexForColumn(column);
+		if(i < 0) return new String[0]; // empty result if column not found
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 

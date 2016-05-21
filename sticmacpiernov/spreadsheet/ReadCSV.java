@@ -81,28 +81,16 @@ public class ReadCSV {
 	 */
 	private void readColumns(String linestr, ArrayList<String> line) {
 		if(linestr == null) return;
-		line.add("");
+		line.add(""); // Start first column
 		int j = 0;
 		for(int i = 0; i < linestr.length(); i++) {
 			char c = linestr.charAt(i);
-			if(c == DELIM) {
+			if(c == DELIM) { // go to next column
 				j++;
-				line.add("");
+				line.add(""); // add a new empty column
 			}
-			else line.set(j, line.get(j)+c);
+			else line.set(j, line.get(j)+c); // add character to current column
 		}
-	}
-
-	/**
-	 * Returns the index of the given column
-	 * @param	name	the column name
-	 * @return	the index of the given column, -1 when not found
-	 */
-	public int findIndexForColumn(String name) {
-		for (int i = 0 ; i < columns.size() ; i++) {
-			if (this.columns.get(i).equals(name)) return i;
-		}
-		return -1;
 	}
 
 	/**
