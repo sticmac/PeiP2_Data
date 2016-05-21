@@ -1,3 +1,5 @@
+package sticmacpiernov.spreadsheet;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -7,7 +9,7 @@ import java.util.stream.*;
  * @author Julien Lemaire
  * @author Pierre-Emmanuel Novac
  */
-class DataCSV {
+public class DataCSV {
 	private ArrayList<Predicate<ArrayList<String>>> filterList;
 	private ReadCSV csv;
 	private int selectedColumn;
@@ -32,7 +34,7 @@ class DataCSV {
 	public Stream<ArrayList<String>> applyFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
 		for(Predicate<ArrayList<String>> lambda: filterList) {
-			t = t.filter(lambda); 
+			t = t.filter(lambda);
 		}
 		return t;
 	}
@@ -56,7 +58,8 @@ class DataCSV {
 	 * Return the filtered data into a two-dimensions array of String
 	 * @return the filtered data into a two-dimensions array of String
 	 */
-	public String[][] toArray(String columnSort, List<Integer> indexes, int numberOfElements) {
+	public String[][] toArray(String columnSort, int order, List<Integer> indexes, int numberOfElements) {
+		this.order = order;
 		selectedColumn = findIndexForColumn(columnSort);
 		return applyFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
 			.sorted(this::compare)
@@ -65,22 +68,43 @@ class DataCSV {
 			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
+	public ResultSet processSearch(String columnSort, int order, ArrayList<String> selectedColumns, int limit, ArrayList<Filter > criteria) {
+		this.clearFilterList();
 
-	/**
-	 * Find the index in which the column with the given name is stored
-	 * @param name the searched column
-	 * @return the index of the searched column
-	 */
-	public int findIndexForColumn(String name) {
-		return csv.findIndexForColumn(name);
+		for (Filter c: criteria) {
+			this.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(c.getValue()));
+		}
+		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).isEmpty())); // Filter out empty cells in sort column
+		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).equals("ns"))); // Filter out "ns" cells in sort column
+		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).equals("nd"))); // Filter out "nd" cells in sort column
+
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+
+		for(String column: selectedColumns) {
+			indexes.add(csv.findIndexForColumn(column));
+		}
+
+		if(indexes.size() < 1) return new ResultSet() { // Empty result if no column was selected
+			@Override public String[] getColumns() { return new String[0]; }
+			@Override public String[][] getContent() { return new String[0][0]; }
+		};
+
+		return new ResultSet() {
+			@Override public String[] getColumns() { return DataCSV.this.getColumnsName(indexes); }
+			@Override public String[][] getContent() { return DataCSV.this.toArray(columnSort, order, indexes, limit); }
+		};
 	}
 
 	/**
-	 * Set the sort order
-	 * @param order the new sort order
+	 * Returns the index of the given column
+	 * @param name the column name
+	 * @return the index of the given column
 	 */
-	public void setOrder(int order) {
-		this.order = order;
+	public int findIndexForColumn(String name) {
+		for (int i = 0 ; i < csv.getColumns().size() ; i++) {
+			if (csv.getColumns().get(i).equals(name)) return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -103,12 +127,12 @@ class DataCSV {
 		}
 		return columns.toArray(new String[columns.size()]);
 	}
-	
+
 	/**
 	 * Returns the different value of the given column
 	 * @param column the column name
 	 * @return a String array, containing the values of the column
-	 */	
+	 */
 	public String[] getColumnValues(String column) {
 		int i = findIndexForColumn(column);
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);

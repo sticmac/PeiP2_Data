@@ -1,3 +1,6 @@
+package sticmacpiernov.spreadsheet.panel;
+
+import sticmacpiernov.spreadsheet.Filter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +12,7 @@ import java.util.function.*;
  * @author Pierre-Emmanuel Novac
  * @version 1.0
  */
-class Criterion extends JPanel{
+public class Criterion extends JPanel implements Filter {
 	private JComboBox<String> list;
 	private JComboBox<String> column;
 	private static Supplier<String[]> getColumnsName;
@@ -34,6 +37,7 @@ class Criterion extends JPanel{
 	 * @param items the content of the column
 	 */
 	public Criterion(String column) {
+		if(column == null) return;
 		this.column = new JComboBox<String>(getColumnsName.get());
 		this.list = new JComboBox<String>(getColumnValues.apply(column));
 
@@ -52,18 +56,24 @@ class Criterion extends JPanel{
 		list.setEnabled(false); //non activated by default: the user has to activate it
 	}
 
+	public Criterion() {
+		this(getColumnsName.get()[0]);
+	}
+
 	/**
 	 * Returns the selected item from the <code>JComboBox</code> in the <code>Criterion</code>
 	 * @return the selected item in the <code>Criterion</code>
 	 */
-	public Object getSelectedItem() {
-		return list.getSelectedItem();
+	@Override
+	public String getValue() {
+		return (String)list.getSelectedItem();
 	}
 
 	/**
 	 * Return the name of the column which the <code>Criterion</code> is on
 	 * @return the name of the column which the <code>Criterion</code> is on
 	 */
+	@Override
 	public String getColumn() {
 		return (String)column.getSelectedItem();
 	}

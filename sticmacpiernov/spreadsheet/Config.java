@@ -1,3 +1,5 @@
+package sticmacpiernov.spreadsheet;
+
 public class Config {
 	// Default criteria
 	public static final String[] defaultCriteria = {"domaine", "academie", "discipline", "etablissement"};
