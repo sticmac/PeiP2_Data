@@ -3,9 +3,13 @@ package sticmacpiernov.spreadsheet;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+import sticmacpiernov.spreadsheet.struct.*;
 
 /**
- * <code>DataCSV</code> class
+ * This class is used to process data from a ReadCSV object.
+ * It can be used to filter, sort and limit lines from a CSV file after
+ * reading it with ReadCSV.
+ *
  * @author Julien Lemaire
  * @author Pierre-Emmanuel Novac
  */
@@ -17,7 +21,7 @@ public class DataCSV {
 
 	/**
 	 * Default constructor of <code>DataCSV</code>
-	 * @param csv a ReadCSV object (parsed CSV file)
+	 * @param	csv	a ReadCSV object (parsed CSV file)
 	 */
 	public DataCSV(ReadCSV csv) {
 		this.csv = csv;
@@ -28,8 +32,8 @@ public class DataCSV {
 
 	/**
 	 * Apply all the filters in the filterlist to the data stored from <code>CSV</code> file
-	 * @param s the stream which we apply the filters on
-	 * @return the filtered stream
+	 * @param	s	the stream which we apply the filters on
+	 * @return	the filtered stream
 	 */
 	public Stream<ArrayList<String>> applyFilter(Stream<ArrayList<String>> s) {
 		Stream<ArrayList<String>> t = s;
@@ -41,7 +45,7 @@ public class DataCSV {
 
 	/**
 	 * Add a filter to the filter list
-	 * @param filter the filter to add to the list
+	 * @param	filter	the filter to add to the list
 	 */
 	public void addFilter(Predicate<ArrayList<String>> filter) {
 		filterList.add(filter);
@@ -56,23 +60,36 @@ public class DataCSV {
 
 	/**
 	 * Return the filtered data into a two-dimensions array of String
-	 * @return the filtered data into a two-dimensions array of String
+	 * @param	columnSort		the column used to sort results
+	 * @param	order			1 for ascending order, -1 for descending order
+	 * @param	indexes			indexes of columns to return
+	 * @param	numberOfElements	number of elements to return
+	 * @return	the filtered data into a two-dimensions array of String
 	 */
 	public String[][] toArray(String columnSort, int order, List<Integer> indexes, int numberOfElements) {
 		this.order = order;
 		selectedColumn = findIndexForColumn(columnSort);
 		return applyFilter(csv.getData().stream()) // Generate the Stream and apply filters on it
-			.sorted(this::compare)
+			.sorted(this::compare) // Use our comparator for sorting data
 			.map((b) -> indexes.stream().map(c -> b.get(c)).toArray(String[]::new)) // Select columns according to indexes
-			.limit(numberOfElements) // Limit to 10 results
+			.limit(numberOfElements) // Limit returned results
 			.toArray(String[][]::new); //Converts the stream into an array
 	}
 
-	public ResultSet processSearch(String columnSort, int order, ArrayList<String> selectedColumns, int limit, ArrayList<Filter > criteria) {
+	/**
+	 * Execute the requested search.
+	 * @param	columnSort	the column used to sort results
+	 * @param	order		1 for ascending order, -1 for descending order
+	 * @param	selectedColumns	list of columns to return
+	 * @param	limit		number of results to return
+	 * @param	criteria	list of filters to apply
+	 * @return	a ResultSet object containing the table of results and the columns name
+	 */
+	public ResultSet processSearch(String columnSort, int order, ArrayList<String> selectedColumns, int limit, ArrayList<Filter> criteria) {
 		this.clearFilterList();
 
 		for (Filter c: criteria) {
-			this.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(c.getValue()));
+			this.addFilter(b -> b.get(csv.findIndexForColumn(c.getColumn())).equals(c.getValue())); // Add all filter followings the "equals" relationship
 		}
 		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).isEmpty())); // Filter out empty cells in sort column
 		this.addFilter(b -> !(b.get(csv.findIndexForColumn(columnSort)).equals("ns"))); // Filter out "ns" cells in sort column
@@ -97,8 +114,8 @@ public class DataCSV {
 
 	/**
 	 * Returns the index of the given column
-	 * @param name the column name
-	 * @return the index of the given column
+	 * @param	name	the column name
+	 * @return	the	index of the given column
 	 */
 	public int findIndexForColumn(String name) {
 		for (int i = 0 ; i < csv.getColumns().size() ; i++) {
@@ -109,7 +126,7 @@ public class DataCSV {
 
 	/**
 	 * Returns all the <code>CSV</code>'s columns' name
-	 * @return the column's name
+	 * @return	all columns name
 	 */
 	public String[] getColumnsName() {
 		return csv.getColumns().toArray(new String[csv.getColumns().size()]);
@@ -117,8 +134,8 @@ public class DataCSV {
 
 	/**
 	 * Returns all the name of the columns that match the given indexes
-	 * @param indexes a list of indexes
-	 * @return the name of the columns that match the indexes
+	 * @param	indexes a list of column indexes
+	 * @return	the name of the columns that match the indexes
 	 */
 	public String[] getColumnsName(List<Integer> indexes) {
 		ArrayList<String> columns = new ArrayList<String>();
@@ -130,14 +147,20 @@ public class DataCSV {
 
 	/**
 	 * Returns the different value of the given column
-	 * @param column the column name
-	 * @return a String array, containing the values of the column
+	 * @param	column	the column name
+	 * @return	values from the column
 	 */
 	public String[] getColumnValues(String column) {
 		int i = findIndexForColumn(column);
 		return csv.getData().stream().filter(b -> !b.get(i).isEmpty()).map(b -> b.get(i)).sorted().distinct().toArray(String[]::new);
 	}
 
+	/**
+	 * Implements a Comparator-compatible method used for sorting data.
+	 * Tries first to compare the data as Float and if it fails, use String comparison.
+	 * Uses the order attribute for reversing the result if needed.
+	 * @return 	result of compareTo() on Float or String
+	 */
 	private int compare(ArrayList<String> b, ArrayList<String> c) {
 		String bstr = b.get(selectedColumn);
 		String cstr = c.get(selectedColumn);

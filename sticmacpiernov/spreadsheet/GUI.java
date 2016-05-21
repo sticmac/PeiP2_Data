@@ -3,6 +3,7 @@ package sticmacpiernov.spreadsheet;
 import sticmacpiernov.spreadsheet.*;
 import sticmacpiernov.spreadsheet.menu.*;
 import sticmacpiernov.spreadsheet.panel.*;
+import sticmacpiernov.spreadsheet.struct.ResultSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +11,11 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * <code>GUI</code> class
+ * This class creates a window (JFrame object).
+ * Handles the graphical user interface.
+ *
  * @author Julien Lemaire
  * @author Pierre-Emmanuel Novac
- * @version 1.0
  */
 class GUI extends JFrame {
 	private DataCSV csv;
@@ -25,7 +27,8 @@ class GUI extends JFrame {
 	private Columns columnsMenu;
 
 	/**
-	 * Constructeur de la <code>GUI</code>
+	 * Creates a new GUI object using the given CSV data.
+	 * @param	csv	a parsed CSV file
 	 */
 	public GUI(DataCSV csv) {
 		this.csv = csv;
@@ -67,7 +70,7 @@ class GUI extends JFrame {
 		limit = new Limit();
 		choices.add(limit);
 
-		// Search button
+		// Search button, runs the processSearch() method below when clicked
 		choices.add(new JButton("Search") { { addActionListener((e) -> GUI.this.processSearch()); } });
 
 		this.add(choices, BorderLayout.WEST);
