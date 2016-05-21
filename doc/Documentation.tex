@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{luatextra}
+\usepackage{polyglossia}
+\usepackage{ulem}
+\usepackage{framed}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{titling}
+\usepackage{courier}
+
+\setlength{\droptitle}{-5em}   % This is your set screw
+
+\setmainlanguage{french}
+\setmainfont{Latin Modern Roman}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{language=bash,
+  basicstyle={\small\ttfamily},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  tabsize=4
+}
+
+\geometry{margin={1in,1in}}
+
+\title{Documentation projet Algorithmique et Programmation}
+\author{Julien LEMAIRE - Pierre-Emmanuel NOVAC}
+
+\begin{document}
+
+\maketitle
+
+\section{Présentation}
+
+Le programme se présente sous la forme d'une interface graphique séparée en deux zones: à gauche le choix des critères à appliquer, à droite le résultat. Il permet de filtrer et trier les données d'un fichier lu au format CSV tant que celui ci utilise \texttt{;} comme délimiteur et que sa première ligne contient le nom des colonnes.\\
+Le programme se lance avec la commande suivante:
+\begin{lstlisting}
+./run.sh [fichier.csv]
+\end{lstlisting}
+Si aucun nom de fichier n'est indiqué, \texttt{fr-esr-insertion\_professionnelle-master.csv} est utilisé par défaut.\\
+Si le fichier utilisé n'est pas \texttt{fr-esr-insertion\_professionnelle-master.csv}, les valeurs par défaut ne correspondront pas.\\
+Le menu \textbf{Columns} permet de sélectionner les colonnes à afficher dans le résultat.
+
+\subsection{Critères}
+
+Les filtres peuvent être ajoutés à la volée en cliquant sur le bouton \textbf{Add}. La liste déroulante de gauche permet de sélectionner une colonne sur laquelle appliquer le filtre, la case à cocher permet de l'activer ou non, et la liste déroulante de droite permet de choisir le contenu de cette colonne de façon à extraire les lignes correspondantes. Dans cette version, la seule possibilité de comparaison repose sur l'égalité des chaînes de caractères.\\
+
+\subsection{Tri}
+
+Le tri se fait en fonction d'une comparaison classique de chaîne de caractères (ou de nombre à virgule flottante le cas échéant) sur une unique colonne. pour être comparée. On peut sélectionner l'ordre croissant ou décroissant.
+
+\subsection{Limite de résultat}
+
+Une zone de texte qui n'accepte que des nombres entiers permet de spécifier une limite au nombre de résultat. Elle est par défaut de 10.
+
+\section{Choix de développement}
+
+\paragraph{Langue:} Au départ nous avions des noms de variables et de mé thodes en français et d'autres en anglais. Dans un soucis d'homogénéité, nous avons fait le choix de n'utiliser que des noms anglais, les commentaires et le texte de l'interface sont donc eux aussi rédigés en anglais.
+
+\paragraph{Javadoc:} L'intégralité des classes et des méthodes possèdent des commentaires au format Javadoc. Un répertoire \textit{javadoc/} est donc mis à disposition et contient la Javadoc générée à partir de l'ensemble du code et propose alors une vue globale du code du projet. En revanche certaines méthodes complexes contiennent des commentaires plus spécifiques pour certaines instructions et n'apparaissent donc pas dans la Javadoc.
+
+\paragraph{Java 8:} Le coeur du programme repose sur les nouveautés de Java 8 comme les \textit{Stream}, les références vers des méthodes, les expressions lambda. Toutes les fonctions du programme auraient pu être écrites sans utiliser ces fonctionnalités du langage, mais cela simplifie la programmation et permet de produire un code plus modulaire, qui pourra s'adapter à différentes situations. Il en résulte un code qui ne repose pas sur de l'algorithmique classique et fait appel a de nombreuses fonctionnalités avancées de Java. Les performances peuvent donc être discutables et plus difficilement évaluables. Les tests avec \texttt{fr-esr-insertion\_professionnelle-master.csv} ne révèlent pas de soucis de ce côté.
+
+
+\section{Structuration du code}
+
+Nous avons essayé au maximum de procéder à une séparation cohérente du code. Dans un premier temps, le code consistait principalement en trois classes: une pour lire le fichier CSV, une pour trier et filter les données, et une pour l'interface graphique. Cette dernière étant très dense, peu lisible et extensible, elle a été décomposée en différent sous-paquets contenant différentes classes.
+
+\subsection{sticmacpiernov.spreadsheet}
+\begin{itemize}
+  \item \textbf{Config} contient quelques constantes de configuration ou valeurs par défaut.
+  \item \textbf{DataCSV} effectue le traitement des données. Le tableau \textit{filterList} est un tableau de fonctions correspondant aux filtres à appliquer. Lors d'une requête, \textit{toArray()} s'exécute et le tableau des données généré par \textbf{ReadCSV} est converti en \textbf{Stream}. Puis la méthode \textit{filter()} est appliquée pour chacun des filtres de \textit{filterList} (c'est le travail de \textit{applyFilter()}). Puis la méthode \textit{sorted()} est appelée avec notre comparateur \textit{compare()} (qui essaye d'abord de comparer en tant \textbf{Float} puis \textbf{String}). Puis les colonnes désirées sont extraites en créant un nouveau \textbf{Stream} de \textbf{String[]} à l'aide de \textit{map()}, lequel agit en utilisant \textit{map()} sur le \textbf{Stream} issu du tableau d'indices des colonnes pour récupérer la colonne correspondante et la transformer en \textbf{String[]} avec \textit{toArray()}. \textit{limit()} est alors utilisé pour ne conserver qu'un certain nombre de résultat. Enfin le \textbf{Stream} est finalement transformé en \textbf{String[][]} avec \textit{toArray()}.
+  \item \textbf{GUI} créé l'interface graphique. Elle hérite de JFrame et représente donc la fenêtre du programme. Elle créé les différents éléments de l'interface et les affiche, et traite l'action sur le bouton \textbf{Search}. Ces différents éléments sont d'une part la barre de menu, dont le contenu est instancié à partir des classes de \textbf{sticmacpiernov.spreadsheet.menu}, et d'autre part la zone de critère et la zone de résultat, éléments instanciée à partir des classes de \textbf{sticmacpiernov.spreadsheet.panel}.
+  \item \textbf{ReadCSV} est la classe qui permet de décoder le fichier CSV. Elle lit d'abord la première ligne du fichier pour récupérer les noms des colonnes dans une liste de chaînes de caractères, puis lit la suite pour générer un tableau à deux dimensions. Le fichier est lu lignes par lignes, et chacune des lignes est lue caractères par caractères pour la décomposer en fonction du délimiteur (par défaut \texttt{;}). Le délimiteur et le nom de fichier par défaut sont des constantes de cette classe.
+  \item \textbf{Spreadsheet} est le point d'entrée du programme. La fonction \textit{main()} lit éventuellement un argument sur la ligne de commande et instancie les différents objets, ce qui a pour effet de lire le fichier CSV et créer la fenêtre de l'interface.
+\end{itemize}
+\subsubsection{sticmacpiernov.spreadsheet.struct}
+Deux interfaces pour représenter des données à faire transiter entre l'interface graphique et les méthodes d'extraction de données.
+\begin{itemize}
+  \item \textbf{Filter} qui représente un filtre à appliquer sur les données: ne conservent que les lignes dont la colonne retournée par \textit{getColumn()} correspond à la valeur retournée par \textit{getValue()}. Il aurait été intéressant d'ajouter d'autres possibilités de critères, tel que "contient", "supérieur à", etc...
+  \item \textbf{ResultSet} qui représente le résultat de la requête composée de la liste des colonnes et du tableau de données.
+\end{itemize}
+\subsubsection{sticmacpiernov.spreadsheet.menu}
+Les classes correspondant aux différents menu de l'interfaces, toutes héritent de \textbf{JMenu}.
+\begin{itemize}
+  \item \textbf{Columns} est un menu de cases à cocher qui permet de sélectionner les colonnes à afficher dans le résultats. Les colonnes sont lues directement du fichier CSV et sont ajoutées au menu lors de l'instanciation de l'objet. Les valeurs par défaut des cases cochées sont lues à partir de la constante \textit{defaultColumns} définie dans \textbf{Config}. Les colonnes à afficher sont récupérées par la suite à l'aide la méthode \textit{getSelected()}.
+  \item \textbf{Options} contient simplement un bouton pour quitter.
+  \item \textbf{Plus} contient un bouton pour afficher une boîte de dialogue "à propos".
+\end{itemize}
+\subsubsection{sticmacpiernov.spreadsheet.layouthelpers}
+Ces deux classes succintes sont inspirées de code trouvé sur Internet et n'apportent que quelques ajustements à l'interface graphique.
+\begin{itemize}
+  \item \textbf{StayOpenCheckBoxMenuItemUI} empêche la fermeture du menu \textbf{Columns} lors d'un clic sur une entrée.
+  \item \textbf{JTableAutoSize} créé une JTable dont les colonnes se dimensionnent automatiquement en fonction de leur contenu.
+\end{itemize}
+\subsubsection{sticmacpiernov.spreadsheet.panel}
+\begin{itemize}
+  \item \textbf{Criteria} représente la liste des critères et permet d'en ajouter à la volée.
+  \item \textbf{Criterion} représente un critère sur l'interface.
+  \item \textbf{Limit} contient la zone de texte pour entrer la limite de résultat à retourner. Utilise un JFormattedTextField pour n'autoriser que les nombres entiers.
+  \item \textbf{ResultsTable} est un JScrollPane contenant une JTableAutoSize, utilisée pour afficher les résultats. De cette manière on a un tableau qu'on peut faire défiler horizontalement et verticalement.
+  \item \textbf{Sort} qui contient une liste déroulante pour sélectionner la colonne selon laquelle trier, et les deux boutons radios de l'ordre du tri.
+\end{itemize}
+
+\end{document}
