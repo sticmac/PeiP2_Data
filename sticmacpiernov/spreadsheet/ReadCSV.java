@@ -16,9 +16,9 @@ public class ReadCSV {
 
 	/**
 	 * Reads a CSV-formatted text file.
-	 * Column names (first line of CSV file) are stored in their of ArrayList<String>.
-	 * Each line is splitted according to the DELIM delimiter and the result is stored in an ArrayList<String>.
-	 * All lines are stored in an ArrayList<ArrayList<String>>.
+	 * Column names (first line of CSV file) are stored in their of ArrayList&lt;String&gt;.
+	 * Each line is splitted according to the DELIM delimiter and the result is stored in an ArrayList&lt;String&gt;.
+	 * All lines are stored in an ArrayList&lt;ArrayList&lt;String&gt;&gt;.
 	 * @param	filename	the CSV file name to parse
 	 */
 	public ReadCSV(String filename) {

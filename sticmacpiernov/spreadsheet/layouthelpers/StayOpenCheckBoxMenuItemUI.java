@@ -15,7 +15,7 @@ import javax.swing.MenuSelectionManager;
 public class StayOpenCheckBoxMenuItemUI extends BasicCheckBoxMenuItemUI {
 	/**
 	 * Modified doClick for doing nothing.
-	 * @param	sm	a MenuSelectionManager
+	 * @param	msm	a MenuSelectionManager
 	 */
 	@Override
 	protected void doClick(MenuSelectionManager msm) {
