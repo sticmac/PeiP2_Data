@@ -1,3 +1,8 @@
-# PeiP2_Data
-Another school project
-Miaou!
+# Spreadsheet
+### Building
+
+    javac sticmacpiernov/spreadsheet/Spreadsheet.java
+
+### Running
+
+    java sticmacpiernov.spreadsheet.Spreadsheet
