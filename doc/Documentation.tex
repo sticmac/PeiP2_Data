@@ -38,22 +38,22 @@
 
 \section{Présentation}
 
-Le programme se présente sous la forme d'une interface graphique séparée en deux zones: à gauche le choix des critères à appliquer, à droite le résultat. Il permet de filtrer et trier les données d'un fichier lu au format CSV tant que celui ci utilise \texttt{;} comme délimiteur et que sa première ligne contient le nom des colonnes.\\
+Le programme se présente sous la forme d'une interface graphique séparée en deux zones: à gauche le choix des critères à appliquer, à droite le résultat. Il permet de filtrer et trier les données d'un fichier lu au format CSV tant que celui ci utilise "\texttt{;}" comme délimiteur et que sa première ligne contient le nom des colonnes.\\
 Le programme se lance avec la commande suivante:
 \begin{lstlisting}
 ./run.sh [fichier.csv]
 \end{lstlisting}
-Si aucun nom de fichier n'est indiqué, \texttt{fr-esr-insertion\_professionnelle-master.csv} est utilisé par défaut.\\
-Si le fichier utilisé n'est pas \texttt{fr-esr-insertion\_professionnelle-master.csv}, les valeurs par défaut ne correspondront pas.\\
+Si aucun nom de fichier n'est indiqué, \texttt{fr-esr-insertion\_professionnelle-master.csv} est utilisé par défaut. Il est téléchargeable à l'adresse \url{https://data.enseignementsup-recherche.gouv.fr/explore/dataset/fr-esr-insertion_professionnelle-master/download?format=csv}. \\
+Si le fichier utilisé n'est pas \texttt{fr-esr-insertion\_professionnelle-master.csv}, les critères ajoutés et les colonnes sélectionnées par défaut ne correspondront pas, il faudra les définir manuellement.\\
 Le menu \textbf{Columns} permet de sélectionner les colonnes à afficher dans le résultat.
 
 \subsection{Critères}
 
-Les filtres peuvent être ajoutés à la volée en cliquant sur le bouton \textbf{Add}. La liste déroulante de gauche permet de sélectionner une colonne sur laquelle appliquer le filtre, la case à cocher permet de l'activer ou non, et la liste déroulante de droite permet de choisir le contenu de cette colonne de façon à extraire les lignes correspondantes. Dans cette version, la seule possibilité de comparaison repose sur l'égalité des chaînes de caractères.\\
+Les filtres peuvent être ajoutés à la volée en cliquant sur le bouton \textbf{Add}. La liste déroulante de gauche permet de sélectionner une colonne sur laquelle appliquer le filtre, la case à cocher permet de l'activer ou non, et la liste déroulante de droite permet de choisir le contenu de cette colonne de façon à extraire les lignes correspondantes. Dans cette version, la seule possibilité de comparaison repose sur l'égalité des chaînes de caractères.
 
 \subsection{Tri}
 
-Le tri se fait en fonction d'une comparaison classique de chaîne de caractères (ou de nombre à virgule flottante le cas échéant) sur une unique colonne. pour être comparée. On peut sélectionner l'ordre croissant ou décroissant.
+Le tri se fait en fonction d'une comparaison classique de chaîne de caractères (ou de nombre à virgule flottante le cas échéant) sur une unique colonne. On peut sélectionner l'ordre croissant ou décroissant.
 
 \subsection{Limite de résultat}
 

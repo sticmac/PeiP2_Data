@@ -193,6 +193,16 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /home/piernov/.texlive/texmf-var/luatex-cache/generic/fonts/otf/lmroman12-bold.luc
 INPUT /home/piernov/.texlive/texmf-var/luatex-cache/generic/fonts/otf/lmroman9-regular.luc
+INPUT /home/piernov/.texlive/texmf-var/luatex-cache/generic/fonts/otf/lmroman7-regular.luc
+INPUT /home/piernov/.texlive/texmf-var/luatex-cache/generic/fonts/otf/lmroman5-regular.luc
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmmi7.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmmi5.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmsy7.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmsy5.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr7.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr5.tfm
 INPUT ./Documentation.aux
 INPUT /usr/local/share/texmf/tex/generic/hyph-utf8/patterns/txt/hyph-fr.pat.txt
 INPUT ./Documentation.out
